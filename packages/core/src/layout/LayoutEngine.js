@@ -51,6 +51,32 @@ export default class LayoutEngine {
     }
   }
 
+  // layoutColumn(attributedString, start, container, rect, isLastContainer) {
+  //   while (start < attributedString.length && rect.height > 0) {
+  //     let next = attributedString.string.indexOf('\n', start);
+  //     const isEmptyLine = next === start;
+
+  //     if (isEmptyLine) next += 1;
+  //     if (next === -1) next = attributedString.string.length;
+
+  //     const paragraph = attributedString.slice(start, next);
+
+  //     const block = this.layoutParagraph(paragraph, container, rect, isLastContainer);
+  //     const paragraphHeight = block.bbox.height + block.style.paragraphSpacing;
+
+  //     container.blocks.push(block);
+
+  //     rect.y += paragraphHeight;
+  //     rect.height -= paragraphHeight;
+  //     start += paragraph.length;
+
+  //     // If entire paragraph did not fit, move on to the next column or container.
+  //     if (start < next) break;
+  //   }
+
+  //   return start;
+  // }
+
   layoutColumn(attributedString, start, container, rect, isLastContainer) {
     while (start < attributedString.length && rect.height > 0) {
       let next = attributedString.string.indexOf('\n', start);
@@ -64,16 +90,10 @@ export default class LayoutEngine {
 
       rect.y += paragraphHeight;
       rect.height -= paragraphHeight;
-      start += paragraph.length;
-
-      if (attributedString.string[start] === '\n') {
-        start++;
-      }
+      start += paragraph.length + 1;
 
       // If entire paragraph did not fit, move on to the next column or container.
-      if (start < next) {
-        break;
-      }
+      if (start < next) break;
     }
 
     return start;
@@ -123,6 +143,7 @@ export default class LayoutEngine {
     // Add empty line fragment for empty glyph strings
     if (glyphString.length === 0) {
       const newLineFragment = this.typesetter.layoutLineFragments(
+        pos,
         lineRect,
         glyphString,
         container,
