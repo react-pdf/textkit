@@ -274,14 +274,23 @@ class GlyphString {
   }
 
   indexOf(string, index = 0) {
-    const stringIndex = this.stringIndexForGlyphIndex(index);
-    const nextIndex = this.string.indexOf(string, stringIndex);
+    let run;
+    let count = 0;
+    const code = string.charCodeAt(0);
 
-    if (nextIndex === -1) {
-      return -1;
+    for (let i = 0; i < this.glyphRuns.length; i++) {
+      run = this.glyphRuns[i];
+
+      for (let j = 0; j < run.glyphs.length; j++) {
+        if (run.glyphs[j].id === code && count + j > index) {
+          return count + j;
+        }
+      }
+
+      count += run.glyphs.length;
     }
 
-    return this.glyphIndexForStringIndex(nextIndex);
+    return -1;
   }
 
   getUnicodeCategory(index) {
@@ -313,9 +322,7 @@ class GlyphString {
     const scale = fontSize / font.unitsPerEm;
     const glyphIndex = this.start + index - run.start;
 
-    if (this._end) {
-      this._end += 1;
-    }
+    if (this._end) this._end += 1;
 
     run.glyphs.splice(glyphIndex, 0, glyph);
     run.stringIndices.splice(glyphIndex, 0, run.stringIndices[glyphIndex]);
@@ -344,9 +351,7 @@ class GlyphString {
   }
 
   deleteGlyph(index) {
-    if (index < 0 || index >= this.length) {
-      return;
-    }
+    if (index < 0 || index >= this.length) return;
 
     const runIndex = this.runIndexAtGlyphIndex(index);
     const run = this._glyphRuns[runIndex];

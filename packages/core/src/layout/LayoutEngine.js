@@ -1,24 +1,9 @@
-import ParagraphStyle from '../models/ParagraphStyle';
-import Rect from '../geom/Rect';
-import Block from '../models/Block';
+import AttributedString from '../models/AttributedString';
+import FontDescriptor from '../models/FontDescriptor';
 import GlyphGenerator from './GlyphGenerator';
 import Typesetter from './Typesetter';
 import injectEngines from './injectEngines';
-
-// 1. split into paragraphs
-// 2. get bidi runs and paragraph direction
-// 3. font substitution - map to resolved font runs
-// 4. script itemization
-// 5. font shaping - text to glyphs
-// 6. line breaking
-// 7. bidi reordering
-// 8. justification
-
-// 1. get a list of rectangles by intersecting path, line, and exclusion paths
-// 2. perform line breaking to get acceptable break points for each fragment
-// 3. ellipsize line if necessary
-// 4. bidi reordering
-// 5. justification
+import flattenRuns from './flattenRuns';
 
 /**
  * A LayoutEngine is the main object that performs text layout.
@@ -27,114 +12,192 @@ import injectEngines from './injectEngines';
  * various layout tasks. These objects can be overridden to customize
  * layout behavior.
  */
+
+const applyDefaultStyles = attributedString => {
+  const runs = attributedString.runs.map(run => {
+    const { start, end, attributes } = run;
+    return {
+      start,
+      end,
+      attributes: {
+        color: attributes.color || 'black',
+        backgroundColor: attributes.backgroundColor || null,
+        fontDescriptor: FontDescriptor.fromAttributes(attributes),
+        font: attributes.font || null,
+        fontSize: attributes.fontSize || 12,
+        lineHeight: attributes.lineHeight || null,
+        underline: attributes.underline || false,
+        underlineColor: attributes.underlineColor || attributes.color || 'black',
+        underlineStyle: attributes.underlineStyle || 'solid',
+        strike: attributes.strike || false,
+        strikeColor: attributes.strikeColor || attributes.color || 'black',
+        strikeStyle: attributes.strikeStyle || 'solid',
+        link: attributes.link || null,
+        fill: attributes.fill !== false,
+        stroke: attributes.stroke || false,
+        features: attributes.features || [],
+        wordSpacing: attributes.wordSpacing || 0,
+        yOffset: attributes.yOffset || 0,
+        characterSpacing: attributes.characterSpacing || 0,
+        attachment: attributes.attachment || null,
+        script: attributes.script || null,
+        bidiLevel: attributes.bidiLevel || null
+      }
+    };
+  });
+
+  return new AttributedString(attributedString.string, runs);
+};
+
+const fontSubstitution = engines => attributedString =>
+  engines.fontSubstitutionEngine.getRuns(attributedString.string, attributedString.runs);
+
+const scriptItemization = engines => attributedString =>
+  engines.scriptItemizer.getRuns(attributedString.string);
+
+const splitParagraphs = () => attributedString => {
+  let index = 0;
+  const paragraps = attributedString.string.split(/(.*\n{1})/g).filter(Boolean);
+
+  return paragraps.map(string => {
+    const paragraph = attributedString.slice(index, index + string.length);
+    index += string.length;
+    return paragraph;
+  });
+};
+
+const wrapWords = engines => paragraphs => {
+  const wrappedParagraphs = [];
+
+  for (const paragraph of paragraphs) {
+    let index = 0;
+    const wrappedParagraph = [];
+    const tokens = paragraph.string.split(/([ ])/g);
+
+    for (const token of tokens) {
+      const word = { string: token, attributedStrings: [] };
+      const parts = engines.wordHyphenation.hyphenateWord(token);
+
+      for (const part of parts) {
+        const start = paragraph.string.indexOf(part, index);
+        word.attributedStrings.push(paragraph.slice(start, start + part.length));
+        index += part.length;
+      }
+
+      wrappedParagraph.push(word);
+    }
+
+    wrappedParagraphs.push(wrappedParagraph);
+  }
+
+  return wrappedParagraphs;
+};
+
 export default class LayoutEngine {
   constructor(engines) {
-    const injectedEngines = injectEngines(engines);
-    this.glyphGenerator = new GlyphGenerator(injectedEngines);
-    this.typesetter = new Typesetter(injectedEngines);
+    this.engines = injectEngines(engines);
+    this.glyphGenerator = new GlyphGenerator(this.engines);
+    this.typesetter = new Typesetter(this.engines);
   }
 
   layout(attributedString, containers) {
-    let start = 0;
+    const a1 = applyDefaultStyles(attributedString);
+    const fontRuns = fontSubstitution(this.engines)(a1);
+    const scriptRuns = scriptItemization(this.engines)(a1);
+    const runs = flattenRuns([...a1.runs, ...fontRuns, ...scriptRuns]);
+    const a3 = new AttributedString(a1.string, runs);
+    const a4 = splitParagraphs(this.engines)(a3);
+    const a5 = wrapWords(this.engines)(a4);
+    console.log(a5);
 
-    for (let i = 0; i < containers.length && start < attributedString.length; i++) {
-      const container = containers[i];
-      const { bbox, columns, columnGap } = container;
-      const isLastContainer = i === containers.length - 1;
-      const columnWidth = (bbox.width - columnGap * (columns - 1)) / columns;
-      const rect = new Rect(bbox.minX, bbox.minY, columnWidth, bbox.height);
-
-      for (let j = 0; j < container.columns && start < attributedString.length; j++) {
-        start = this.layoutColumn(attributedString, start, container, rect.copy(), isLastContainer);
-        rect.x += columnWidth + container.columnGap;
-      }
-    }
+    // const paragraphs = splitParagraphs()(attributedString);
+    // const words = wrapWords(this.engines)(attributedString);
   }
 
-  layoutColumn(attributedString, start, container, rect, isLastContainer) {
-    while (start < attributedString.length && rect.height > 0) {
-      let next = attributedString.string.indexOf('\n', start);
-      if (next === -1) next = attributedString.string.length;
+  // layoutColumn(attributedString, start, container, rect, isLastContainer) {
+  //   while (start < attributedString.length && rect.height > 0) {
+  //     let next = attributedString.string.indexOf('\n', start);
+  //     if (next === -1) next = attributedString.string.length;
 
-      const paragraph = attributedString.slice(start, next);
-      const block = this.layoutParagraph(paragraph, container, rect, start, isLastContainer);
-      const paragraphHeight = block.bbox.height + block.style.paragraphSpacing;
+  //     const paragraph = attributedString.slice(start, next);
+  //     const block = this.layoutParagraph(paragraph, container, rect, start, isLastContainer);
+  //     const paragraphHeight = block.bbox.height + block.style.paragraphSpacing;
 
-      container.blocks.push(block);
+  //     container.blocks.push(block);
 
-      rect.y += paragraphHeight;
-      rect.height -= paragraphHeight;
-      start += paragraph.length + 1;
+  //     rect.y += paragraphHeight;
+  //     rect.height -= paragraphHeight;
+  //     start += paragraph.length + 1;
 
-      // If entire paragraph did not fit, move on to the next column or container.
-      if (start < next) break;
-    }
+  //     // If entire paragraph did not fit, move on to the next column or container.
+  //     if (start < next) break;
+  //   }
 
-    return start;
-  }
+  //   return start;
+  // }
 
-  layoutParagraph(attributedString, container, rect, stringOffset, isLastContainer) {
-    const glyphString = this.glyphGenerator.generateGlyphs(attributedString);
-    const paragraphStyle = new ParagraphStyle(attributedString.runs[0].attributes);
-    const { marginLeft, marginRight, indent, maxLines, lineSpacing } = paragraphStyle;
+  // layoutParagraph(attributedString, container, rect, stringOffset, isLastContainer) {
+  //   const glyphString = this.glyphGenerator.generateGlyphs(attributedString);
+  //   const paragraphStyle = new ParagraphStyle(attributedString.runs[0].attributes);
+  //   const { marginLeft, marginRight, indent, maxLines, lineSpacing } = paragraphStyle;
 
-    const lineRect = new Rect(
-      rect.x + marginLeft + indent,
-      rect.y,
-      rect.width - marginLeft - indent - marginRight,
-      glyphString.height
-    );
+  //   const lineRect = new Rect(
+  //     rect.x + marginLeft + indent,
+  //     rect.y,
+  //     rect.width - marginLeft - indent - marginRight,
+  //     glyphString.height
+  //   );
 
-    let pos = 0;
-    let lines = 0;
-    let firstLine = true;
-    const fragments = [];
+  //   let pos = 0;
+  //   let lines = 0;
+  //   let firstLine = true;
+  //   const fragments = [];
 
-    while (lineRect.y < rect.maxY && pos < glyphString.length && lines < maxLines) {
-      const lineFragments = this.typesetter.layoutLineFragments(
-        pos,
-        lineRect,
-        glyphString,
-        container,
-        paragraphStyle,
-        stringOffset
-      );
+  //   while (lineRect.y < rect.maxY && pos < glyphString.length && lines < maxLines) {
+  //     const lineFragments = this.typesetter.layoutLineFragments(
+  //       pos,
+  //       lineRect,
+  //       glyphString,
+  //       container,
+  //       paragraphStyle,
+  //       stringOffset
+  //     );
 
-      lineRect.y += lineRect.height + lineSpacing;
+  //     lineRect.y += lineRect.height + lineSpacing;
 
-      if (lineFragments.length > 0) {
-        fragments.push(...lineFragments);
-        pos = lineFragments[lineFragments.length - 1].end;
-        lines++;
+  //     if (lineFragments.length > 0) {
+  //       fragments.push(...lineFragments);
+  //       pos = lineFragments[lineFragments.length - 1].end;
+  //       lines++;
 
-        if (firstLine) {
-          lineRect.x -= indent;
-          lineRect.width += indent;
-          firstLine = false;
-        }
-      }
-    }
+  //       if (firstLine) {
+  //         lineRect.x -= indent;
+  //         lineRect.width += indent;
+  //         firstLine = false;
+  //       }
+  //     }
+  //   }
 
-    // Add empty line fragment for empty glyph strings
-    if (glyphString.length === 0) {
-      const newLineFragment = this.typesetter.layoutLineFragments(
-        pos,
-        lineRect,
-        glyphString,
-        container,
-        paragraphStyle
-      );
+  //   // Add empty line fragment for empty glyph strings
+  //   if (glyphString.length === 0) {
+  //     const newLineFragment = this.typesetter.layoutLineFragments(
+  //       pos,
+  //       lineRect,
+  //       glyphString,
+  //       container,
+  //       paragraphStyle
+  //     );
 
-      fragments.push(...newLineFragment);
-    }
+  //     fragments.push(...newLineFragment);
+  //   }
 
-    const isTruncated = isLastContainer && pos < glyphString.length;
-    fragments.forEach((fragment, i) => {
-      const isLastFragment = i === fragments.length - 1 && pos === glyphString.length;
+  //   const isTruncated = isLastContainer && pos < glyphString.length;
+  //   fragments.forEach((fragment, i) => {
+  //     const isLastFragment = i === fragments.length - 1 && pos === glyphString.length;
 
-      this.typesetter.finalizeLineFragment(fragment, paragraphStyle, isLastFragment, isTruncated);
-    });
+  //     this.typesetter.finalizeLineFragment(fragment, paragraphStyle, isLastFragment, isTruncated);
+  //   });
 
-    return new Block(fragments, paragraphStyle);
-  }
+  //   return new Block(fragments, paragraphStyle);
+  // }
 }

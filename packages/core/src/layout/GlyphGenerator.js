@@ -1,6 +1,6 @@
+import Run from '../models/Run';
 import GlyphRun from '../models/GlyphRun';
 import GlyphString from '../models/GlyphString';
-import Run from '../models/Run';
 import RunStyle from '../models/RunStyle';
 import flattenRuns from './flattenRuns';
 

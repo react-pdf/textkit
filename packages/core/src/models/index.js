@@ -2,7 +2,6 @@ export Run from './Run';
 export Block from './Block';
 export Range from './Range';
 export TabStop from './TabStop';
-export RunStyle from './RunStyle';
 export GlyphRun from './GlyphRun';
 export Container from './Container';
 export Attachment from './Attachment';
