@@ -161,37 +161,41 @@ const generateGlyphs = () => attributedString => {
       glyphIndices
     );
 
-    // this.resolveAttachments(res);
-    // this.resolveYOffset(res);
-
     glyphIndex = glyphEnd;
-
     return res;
   });
 
   return new GlyphString(attributedString.string, glyphRuns);
 };
 
-// const resolveAttachments = () => paragraphs => {
-//   for (const paragraph of paragraphs) {
-//     for (const word of paragraph) {
-//       // const { font, attachment } = glyphRun.attributes;
-//       // if (!attachment) {
-//       //   return;
-//       // }
-//       // const objectReplacement = font.glyphForCodePoint(0xfffc);
-//       // for (let i = 0; i < glyphRun.length; i++) {
-//       //   const glyph = glyphRun.glyphs[i];
-//       //   const position = glyphRun.positions[i];
-//       //   if (glyph === objectReplacement) {
-//       //     position.xAdvance = attachment.width;
-//       //   }
-//       // }
-//     }
-//   }
+const resolveAttachments = () => glyphString => {
+  for (const glyphRun of glyphString.glyphRuns) {
+    const { font, attachment } = glyphRun.attributes;
+    if (!attachment) continue;
+    const objectReplacement = font.glyphForCodePoint(0xfffc);
+    for (let i = 0; i < glyphRun.length; i++) {
+      const glyph = glyphRun.glyphs[i];
+      const position = glyphRun.positions[i];
+      if (glyph === objectReplacement) {
+        position.xAdvance = attachment.width;
+      }
+    }
+  }
 
-//   return paragraphs;
-// };
+  return glyphString;
+};
+
+const resolveYOffset = () => glyphString => {
+  for (const glyphRun of glyphString.glyphRuns) {
+    const { font, yOffset } = glyphRun.attributes;
+    if (!yOffset) continue;
+    for (let i = 0; i < glyphRun.length; i++) {
+      glyphRun.positions[i].yOffset += yOffset * font.unitsPerEm;
+    }
+  }
+
+  return glyphString;
+};
 
 const resolveColumns = container => {
   const { bbox, columns, columnGap } = container;
@@ -208,20 +212,10 @@ const resolveColumns = container => {
   return result;
 };
 
-const layoutLineFragments = (paragraph, container) => {
-  const xAdvance = 0;
-
-  for (const word of paragraph) {
-    for (const glyphString of word.glyphStrings) {
-    }
-  }
-
-  return [];
-};
-
 const glyphGenerator = engines => attributedString =>
   compose(
-    // resolveAttachments(this.engines),
+    map(resolveYOffset(engines)),
+    map(resolveAttachments(engines)),
     map(generateGlyphs(engines)),
     map(wrapWords(engines)),
     splitParagraphs(engines),
@@ -235,27 +229,14 @@ export default class LayoutEngine {
   }
 
   layout(attributedString, containers) {
-    let i = 10;
+    const paragraphs = glyphGenerator(this.engines)(attributedString);
+    const container = containers[0];
+    const columns = resolveColumns(container);
+    const lines = paragraphs.map(p => new LineFragment(columns[0], p));
 
-    while (i > 0) {
-      console.time('layout');
-      const paragraphs = glyphGenerator(this.engines)(attributedString);
-      // console.log(paragraphs);
-      console.timeEnd('layout');
-      i--;
-    }
+    container.blocks.push(new Block(lines));
 
-    // for (const container of containers) {
-    //   const columns = resolveColumns(container);
-
-    //   for (const paragraph of paragraphs) {
-    //     const lines = layoutLineFragments(paragraph, columns[0]);
-
-    //     container.blocks.push(new Block(lines));
-    //   }
-    // }
-
-    // return paragraphs;
+    return paragraphs;
   }
 }
 
