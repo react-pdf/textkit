@@ -274,23 +274,12 @@ class GlyphString {
   }
 
   indexOf(string, index = 0) {
-    let run;
-    let count = 0;
-    const code = string.charCodeAt(0);
+    const stringIndex = this.stringIndexForGlyphIndex(index);
+    const nextIndex = this.string.indexOf(string, stringIndex);
 
-    for (let i = 0; i < this.glyphRuns.length; i++) {
-      run = this.glyphRuns[i];
+    if (nextIndex === -1) return -1;
 
-      for (let j = 0; j < run.glyphs.length; j++) {
-        if (run.glyphs[j].id === code && count + j > index) {
-          return count + j;
-        }
-      }
-
-      count += run.glyphs.length;
-    }
-
-    return -1;
+    return this.glyphIndexForStringIndex(nextIndex);
   }
 
   getUnicodeCategory(index) {
