@@ -1,7 +1,6 @@
 import flattenRuns from './flattenRuns';
 import injectEngines from './injectEngines';
 import Rect from '../geom/Rect';
-import Run from '../models/Run';
 import Block from '../models/Block';
 import GlyphRun from '../models/GlyphRun';
 import GlyphString from '../models/GlyphString';
