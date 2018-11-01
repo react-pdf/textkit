@@ -6,7 +6,7 @@ export default class ParagraphStyle {
     this.paragraphSpacing = attributes.paragraphSpacing || 0;
     this.marginLeft = attributes.marginLeft || attributes.margin || 0;
     this.marginRight = attributes.marginRight || attributes.margin || 0;
-    this.align = attributes.align || 'left';
+    this.align = attributes.align || 'justify';
     this.alignLastLine =
       attributes.alignLastLine || (this.align === 'justify' ? 'left' : this.align);
     this.justificationFactor = attributes.justificationFactor || 1;

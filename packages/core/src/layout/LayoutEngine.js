@@ -5,6 +5,7 @@ import Block from '../models/Block';
 import GlyphRun from '../models/GlyphRun';
 import GlyphString from '../models/GlyphString';
 import LineFragment from '../models/LineFragment';
+import ParagraphStyle from '../models/ParagraphStyle';
 import AttributedString from '../models/AttributedString';
 import FontDescriptor from '../models/FontDescriptor';
 
@@ -16,9 +17,16 @@ import FontDescriptor from '../models/FontDescriptor';
  * layout behavior.
  */
 
+const ALIGNMENT_FACTORS = {
+  left: 0,
+  center: 0.5,
+  right: 1,
+  justify: 0
+};
+
 const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 
-const map = fn => array => array.map(fn);
+const map = fn => (array, ...other) => array.map((e, index) => fn(e, ...other, index));
 
 const applyDefaultStyles = () => attributedString => {
   const runs = attributedString.runs.map(({ start, end, attributes }) => ({
@@ -56,14 +64,14 @@ const applyDefaultStyles = () => attributedString => {
 const preprocessRuns = engines => attributedString => {
   const fontRuns = fontSubstitution(engines)(attributedString);
   const scriptRuns = scriptItemization(engines)(attributedString);
-
-  // TODO: Avoid this
-  attributedString.runs.forEach(run => {
-    delete run.attributes.font;
-    delete run.attributes.fontDescriptor;
+  const stringRuns = attributedString.runs.map(run => {
+    const {
+      attributes: { font, fontDescriptor, ...attributes }
+    } = run;
+    return { ...run, attributes };
   });
 
-  const runs = flattenRuns([...attributedString.runs, ...fontRuns, ...scriptRuns]);
+  const runs = flattenRuns([...stringRuns, ...fontRuns, ...scriptRuns]);
   return new AttributedString(attributedString.string, runs);
 };
 
@@ -89,21 +97,26 @@ const splitParagraphs = () => attributedString => {
 };
 
 const wrapWords = engines => attributedString => {
+  const syllables = [];
   const fragments = [];
 
   for (const run of attributedString.runs) {
     let string = '';
-    const tokens = attributedString.string.slice(run.start, run.end).split(/([ ])/g);
+    const tokens = attributedString.string
+      .slice(run.start, run.end)
+      .split(/([ ]+)/g)
+      .filter(Boolean);
 
     for (const token of tokens) {
       const parts = engines.wordHyphenation.hyphenateWord(token);
+      syllables.push(...parts);
       string += parts.join('');
     }
 
     fragments.push({ string, attributes: run.attributes });
   }
 
-  return AttributedString.fromFragments(fragments);
+  return { attributedString: AttributedString.fromFragments(fragments), syllables };
 };
 
 const resolveGlyphIndices = (string, stringIndices) => {
@@ -141,7 +154,7 @@ const resolveGlyphIndices = (string, stringIndices) => {
   return glyphIndices;
 };
 
-const generateGlyphs = () => attributedString => {
+const stringToGlyphs = attributedString => {
   let glyphIndex = 0;
   const glyphRuns = attributedString.runs.map(run => {
     const { start, end, attributes } = run;
@@ -165,6 +178,17 @@ const generateGlyphs = () => attributedString => {
   });
 
   return new GlyphString(attributedString.string, glyphRuns);
+};
+
+const generateGlyphs = () => paragraph => {
+  let start = 0;
+  const syllables = paragraph.syllables.map(syllable => {
+    const syllableString = paragraph.attributedString.slice(start, start + syllable.length);
+    start += syllable.length;
+    return stringToGlyphs(syllableString);
+  });
+
+  return { syllables, value: stringToGlyphs(paragraph.attributedString) };
 };
 
 const resolveAttachments = () => glyphString => {
@@ -211,16 +235,106 @@ const resolveColumns = container => {
   return result;
 };
 
-const glyphGenerator = engines => attributedString =>
-  compose(
-    map(resolveYOffset(engines)),
-    map(resolveAttachments(engines)),
-    map(generateGlyphs(engines)),
-    map(wrapWords(engines)),
-    splitParagraphs(engines),
-    preprocessRuns(engines),
-    applyDefaultStyles(engines)
-  )(attributedString);
+const finalizeLineFragment = engines => (line, style, isLastFragment, isTruncated) => {
+  const align = isLastFragment && !isTruncated ? style.alignLastLine : style.align;
+
+  if (isLastFragment && isTruncated && style.truncationMode) {
+    engines.truncationEngine.truncate(line, style.truncationMode);
+  }
+
+  let start = 0;
+  let end = line.length;
+
+  // Ignore whitespace at the start and end of a line for alignment
+  while (line.isWhiteSpace(start)) {
+    line.overflowLeft += line.getGlyphWidth(start++);
+  }
+
+  while (line.isWhiteSpace(end - 1)) {
+    line.overflowRight += line.getGlyphWidth(--end);
+  }
+
+  // Adjust line rect for hanging punctuation
+  if (style.hangingPunctuation) {
+    if (align === 'left' || align === 'justify') {
+      if (line.isHangingPunctuationStart(start)) {
+        line.overflowLeft += line.getGlyphWidth(start++);
+      }
+    }
+
+    if (align === 'right' || align === 'justify') {
+      if (line.isHangingPunctuationEnd(end - 1)) {
+        line.overflowRight += line.getGlyphWidth(--end);
+      }
+    }
+  }
+
+  line.rect.x -= line.overflowLeft;
+  line.rect.width += line.overflowLeft + line.overflowRight;
+
+  // Adjust line offset for alignment
+  const remainingWidth = line.rect.width - line.advanceWidth;
+  line.rect.x += remainingWidth * ALIGNMENT_FACTORS[align];
+
+  if (align === 'justify' || line.advanceWidth > line.rect.width) {
+    engines.justificationEngine.justify(line, {
+      factor: style.justificationFactor
+    });
+  }
+
+  engines.decorationEngine.createDecorationLines(line);
+};
+
+const layoutParagraph = engines => (paragraph, container) => {
+  const { value, syllables } = paragraph;
+  const style = new ParagraphStyle();
+  const lines = engines.lineBreaker.suggestLineBreak(value, syllables, container.width, style);
+
+  let currentY = container.y;
+  const lineFragments = lines.map(string => {
+    const lineBox = container.copy();
+    const lineHeight = Math.max(string.height, style.lineHeight);
+
+    lineBox.y = currentY;
+    lineBox.height = lineHeight;
+    currentY += lineHeight;
+
+    return new LineFragment(lineBox, string);
+  });
+
+  lineFragments.forEach((lineFragment, i) => {
+    finalizeLineFragment(engines)(lineFragment, style, i === lineFragments.length - 1);
+  });
+
+  return new Block(lineFragments);
+};
+
+const typesetter = engines => containers => glyphStrings => {
+  const paragraphs = [...glyphStrings];
+
+  const layoutColumn = container => column => {
+    let paragraphRect = column.copy();
+    let nextParagraph = paragraphs.shift();
+
+    while (nextParagraph) {
+      const block = layoutParagraph(engines)(nextParagraph, paragraphRect);
+      container.blocks.push(block);
+      paragraphRect = paragraphRect.copy();
+      paragraphRect.y += block.height;
+      paragraphRect.height -= block.height;
+      nextParagraph = paragraphs.shift();
+    }
+  };
+
+  const layoutContainer = container => {
+    compose(
+      map(layoutColumn(container)),
+      resolveColumns
+    )(container);
+  };
+
+  return containers.map(layoutContainer);
+};
 
 export default class LayoutEngine {
   constructor(engines) {
@@ -228,100 +342,17 @@ export default class LayoutEngine {
   }
 
   layout(attributedString, containers) {
-    const paragraphs = glyphGenerator(this.engines)(attributedString);
-    const container = containers[0];
-    const columns = resolveColumns(container);
-    const lines = paragraphs.map(p => new LineFragment(columns[0], p));
-
-    container.blocks.push(new Block(lines));
-
-    return paragraphs;
+    console.time('layout');
+    compose(
+      typesetter(this.engines)(containers),
+      // map(resolveYOffset(this.engines)),
+      // map(resolveAttachments(this.engines)),
+      map(generateGlyphs(this.engines)),
+      map(wrapWords(this.engines)),
+      splitParagraphs(this.engines),
+      preprocessRuns(this.engines),
+      applyDefaultStyles(this.engines)
+    )(attributedString);
+    console.timeEnd('layout');
   }
 }
-
-// layoutColumn(attributedString, start, container, rect, isLastContainer) {
-//   while (start < attributedString.length && rect.height > 0) {
-//     let next = attributedString.string.indexOf('\n', start);
-//     if (next === -1) next = attributedString.string.length;
-
-//     const paragraph = attributedString.slice(start, next);
-//     const block = this.layoutParagraph(paragraph, container, rect, start, isLastContainer);
-//     const paragraphHeight = block.bbox.height + block.style.paragraphSpacing;
-
-//     container.blocks.push(block);
-
-//     rect.y += paragraphHeight;
-//     rect.height -= paragraphHeight;
-//     start += paragraph.length + 1;
-
-//     // If entire paragraph did not fit, move on to the next column or container.
-//     if (start < next) break;
-//   }
-
-//   return start;
-// }
-
-// layoutParagraph(attributedString, container, rect, stringOffset, isLastContainer) {
-//   const glyphString = this.glyphGenerator.generateGlyphs(attributedString);
-//   const paragraphStyle = new ParagraphStyle(attributedString.runs[0].attributes);
-//   const { marginLeft, marginRight, indent, maxLines, lineSpacing } = paragraphStyle;
-
-//   const lineRect = new Rect(
-//     rect.x + marginLeft + indent,
-//     rect.y,
-//     rect.width - marginLeft - indent - marginRight,
-//     glyphString.height
-//   );
-
-//   let pos = 0;
-//   let lines = 0;
-//   let firstLine = true;
-//   const fragments = [];
-
-//   while (lineRect.y < rect.maxY && pos < glyphString.length && lines < maxLines) {
-//     const lineFragments = this.typesetter.layoutLineFragments(
-//       pos,
-//       lineRect,
-//       glyphString,
-//       container,
-//       paragraphStyle,
-//       stringOffset
-//     );
-
-//     lineRect.y += lineRect.height + lineSpacing;
-
-//     if (lineFragments.length > 0) {
-//       fragments.push(...lineFragments);
-//       pos = lineFragments[lineFragments.length - 1].end;
-//       lines++;
-
-//       if (firstLine) {
-//         lineRect.x -= indent;
-//         lineRect.width += indent;
-//         firstLine = false;
-//       }
-//     }
-//   }
-
-//   // Add empty line fragment for empty glyph strings
-//   if (glyphString.length === 0) {
-//     const newLineFragment = this.typesetter.layoutLineFragments(
-//       pos,
-//       lineRect,
-//       glyphString,
-//       container,
-//       paragraphStyle
-//     );
-
-//     fragments.push(...newLineFragment);
-//   }
-
-//   const isTruncated = isLastContainer && pos < glyphString.length;
-//   fragments.forEach((fragment, i) => {
-//     const isLastFragment = i === fragments.length - 1 && pos === glyphString.length;
-
-//     this.typesetter.finalizeLineFragment(fragment, paragraphStyle, isLastFragment, isTruncated);
-//   });
-
-//   return new Block(fragments, paragraphStyle);
-// }

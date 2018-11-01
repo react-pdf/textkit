@@ -98,10 +98,10 @@ class GlyphRun extends Run {
       this.start,
       this.end,
       this.attributes,
-      this.glyphs,
-      this.positions,
-      this.stringIndices,
-      this.glyphIndices,
+      [...this.glyphs],
+      [...this.positions],
+      [...this.stringIndices],
+      [...this.glyphIndices],
       true
     );
   }

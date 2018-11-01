@@ -99,10 +99,11 @@ class GlyphString {
   slice(start, end) {
     const stringStart = this.stringIndexForGlyphIndex(start);
     const stringEnd = this.stringIndexForGlyphIndex(end);
+    const glyphRuns = this._glyphRuns.map(r => r.copy());
 
     return new GlyphString(
       this.string.slice(stringStart, stringEnd),
-      this._glyphRuns,
+      glyphRuns,
       start + this.start,
       end + this.start
     );
