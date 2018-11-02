@@ -611,13 +611,11 @@ describe('GlyphString', () => {
     expect(string.stringIndexForGlyphIndex(9)).toBe(10);
   });
 
-  test.only('should return correct string index for glyph index (non latin)', () => {
+  test('should return correct string index for glyph index (non latin)', () => {
     const string = createCamboyanTestString({
       value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន',
       runs: [[0, 8], [8, 21]]
     });
-
-    console.log(string.glyphRuns);
 
     expect(string.stringIndexForGlyphIndex(0)).toBe(0);
     expect(string.stringIndexForGlyphIndex(2)).toBe(3);
@@ -641,33 +639,33 @@ describe('GlyphString', () => {
     expect(sliced.stringIndexForGlyphIndex(6)).toBe(6);
   });
 
-  // test('should return correct string index for glyph index for sliced strings (not latin)', () => {
-  //   const string = createCamboyanTestString({
-  //     value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន',
-  //     runs: [[0, 8], [8, 21]]
-  //   });
+  test('should return correct string index for glyph index for sliced strings (not latin)', () => {
+    const string = createCamboyanTestString({
+      value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន',
+      runs: [[0, 8], [8, 21]]
+    });
 
-  //   const sliced = string.slice(4, 11);
+    const sliced = string.slice(4, 11);
 
-  //   expect(sliced.stringIndexForGlyphIndex(0)).toBe(0);
-  //   expect(sliced.stringIndexForGlyphIndex(1)).toBe(1);
-  //   expect(sliced.stringIndexForGlyphIndex(3)).toBe(3);
-  //   expect(sliced.stringIndexForGlyphIndex(4)).toBe(7);
-  //   expect(sliced.stringIndexForGlyphIndex(5)).toBe(8);
-  //   expect(sliced.stringIndexForGlyphIndex(6)).toBe(9);
-  // });
+    expect(sliced.stringIndexForGlyphIndex(0)).toBe(0);
+    expect(sliced.stringIndexForGlyphIndex(1)).toBe(1);
+    expect(sliced.stringIndexForGlyphIndex(3)).toBe(3);
+    expect(sliced.stringIndexForGlyphIndex(4)).toBe(7);
+    expect(sliced.stringIndexForGlyphIndex(5)).toBe(8);
+    expect(sliced.stringIndexForGlyphIndex(6)).toBe(9);
+  });
 
-  // test('should return correct glyph index for string index', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct glyph index for string index', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   expect(string.glyphIndexForStringIndex(0)).toBe(0);
-  //   expect(string.glyphIndexForStringIndex(2)).toBe(2);
-  //   expect(string.glyphIndexForStringIndex(9)).toBe(9);
-  //   expect(string.glyphIndexForStringIndex(10)).toBe(10);
-  // });
+    expect(string.glyphIndexForStringIndex(0)).toBe(0);
+    expect(string.glyphIndexForStringIndex(2)).toBe(2);
+    expect(string.glyphIndexForStringIndex(9)).toBe(9);
+    expect(string.glyphIndexForStringIndex(10)).toBe(10);
+  });
 
   // test('should return correct glyph index for string index (not latin)', () => {
   //   const string = createCamboyanTestString({
@@ -685,263 +683,258 @@ describe('GlyphString', () => {
   //   // expect(string.glyphIndexForStringIndex(12)).toBe(8);
   // });
 
-  // test('should return correct glyph index for string index for sliced strings', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct glyph index for string index for sliced strings', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   const sliced = string.slice(2, 6);
+    const sliced = string.slice(2, 6);
 
-  //   expect(sliced.glyphIndexForStringIndex(0)).toBe(0);
-  //   expect(sliced.glyphIndexForStringIndex(1)).toBe(1);
-  //   expect(sliced.glyphIndexForStringIndex(2)).toBe(2);
-  //   expect(sliced.glyphIndexForStringIndex(3)).toBe(3);
-  // });
+    expect(sliced.glyphIndexForStringIndex(0)).toBe(0);
+    expect(sliced.glyphIndexForStringIndex(1)).toBe(1);
+    expect(sliced.glyphIndexForStringIndex(2)).toBe(2);
+    expect(sliced.glyphIndexForStringIndex(3)).toBe(3);
+  });
 
-  // test('should return correct glyph index for string index for sliced strings (not latin)', () => {
-  //   const string = createCamboyanTestString({
-  //     value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន',
-  //     runs: [[0, 8], [8, 21]]
-  //   });
+  test('should return correct glyph index for string index for sliced strings (not latin)', () => {
+    const string = createCamboyanTestString({
+      value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន',
+      runs: [[0, 8], [8, 21]]
+    });
 
-  //   const sliced = string.slice(4, 15);
+    const sliced = string.slice(4, 15);
 
-  //   expect(sliced.glyphIndexForStringIndex(0)).toBe(0);
-  //   expect(sliced.glyphIndexForStringIndex(3)).toBe(3);
-  //   expect(sliced.glyphIndexForStringIndex(4)).toBe(4);
-  // });
+    expect(sliced.glyphIndexForStringIndex(0)).toBe(0);
+    expect(sliced.glyphIndexForStringIndex(3)).toBe(3);
+    expect(sliced.glyphIndexForStringIndex(4)).toBe(4);
+  });
 
-  // test('should return correct glyph code at glyph index', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct glyph code at glyph index', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   expect(string.codePointAtGlyphIndex(2)).toBe('r'.charCodeAt(0));
-  //   expect(string.codePointAtGlyphIndex(9)).toBe('u'.charCodeAt(0));
-  // });
+    expect(string.codePointAtGlyphIndex(2)).toBe('r'.charCodeAt(0));
+    expect(string.codePointAtGlyphIndex(9)).toBe('u'.charCodeAt(0));
+  });
 
-  // test('should return correct glyph code at glyph index for sliced strings', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct glyph code at glyph index for sliced strings', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   const sliced = string.slice(4, 11);
+    const sliced = string.slice(4, 11);
 
-  //   expect(sliced.codePointAtGlyphIndex(0)).toBe('m'.charCodeAt(0));
-  //   expect(sliced.codePointAtGlyphIndex(1)).toBe(' '.charCodeAt(0));
-  //   expect(sliced.codePointAtGlyphIndex(2)).toBe('i'.charCodeAt(0));
-  //   expect(sliced.codePointAtGlyphIndex(5)).toBe('u'.charCodeAt(0));
-  // });
+    expect(sliced.codePointAtGlyphIndex(0)).toBe('m'.charCodeAt(0));
+    expect(sliced.codePointAtGlyphIndex(1)).toBe(' '.charCodeAt(0));
+    expect(sliced.codePointAtGlyphIndex(2)).toBe('i'.charCodeAt(0));
+    expect(sliced.codePointAtGlyphIndex(5)).toBe('u'.charCodeAt(0));
+  });
 
-  // test('should return correct char at glyph index', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct char at glyph index', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   expect(string.charAtGlyphIndex(2)).toBe('r');
-  //   expect(string.charAtGlyphIndex(9)).toBe('u');
-  // });
+    expect(string.charAtGlyphIndex(2)).toBe('r');
+    expect(string.charAtGlyphIndex(9)).toBe('u');
+  });
 
-  // test('should return correct char at glyph index for sliced strings', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct char at glyph index for sliced strings', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   const sliced = string.slice(4, 11);
+    const sliced = string.slice(4, 11);
 
-  //   expect(sliced.charAtGlyphIndex(0)).toBe('m');
-  //   expect(sliced.charAtGlyphIndex(1)).toBe(' ');
-  //   expect(sliced.charAtGlyphIndex(2)).toBe('i');
-  //   expect(sliced.charAtGlyphIndex(5)).toBe('u');
-  // });
+    expect(sliced.charAtGlyphIndex(0)).toBe('m');
+    expect(sliced.charAtGlyphIndex(1)).toBe(' ');
+    expect(sliced.charAtGlyphIndex(2)).toBe('i');
+    expect(sliced.charAtGlyphIndex(5)).toBe('u');
+  });
 
-  // test('should return correct offset at glyph index', () => {
-  //   //   l     o     r    e     m            i     p     s     u     m
-  //   //   6     6     6    6     6      3     6     6     6     6     6
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct offset at glyph index', () => {
+    //   l     o     r    e     m            i     p     s     u     m
+    //   6     6     6    6     6      3     6     6     6     6     6
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   expect(string.offsetAtGlyphIndex(0)).toBeCloseTo(0);
-  //   expect(string.offsetAtGlyphIndex(1)).toBeCloseTo(6, 1);
-  //   expect(string.offsetAtGlyphIndex(5)).toBeCloseTo(30, 1);
-  //   expect(string.offsetAtGlyphIndex(8)).toBeCloseTo(45, 1);
-  // });
+    expect(string.offsetAtGlyphIndex(0)).toBeCloseTo(0);
+    expect(string.offsetAtGlyphIndex(1)).toBeCloseTo(6, 1);
+    expect(string.offsetAtGlyphIndex(5)).toBeCloseTo(30, 1);
+    expect(string.offsetAtGlyphIndex(8)).toBeCloseTo(45, 1);
+  });
 
-  // test('should return correct offset at glyph index for sliced strings', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct offset at glyph index for sliced strings', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   //   m       i   p   s   u   m
-  //   //   6   3   6   6   6   6   6
-  //   const sliced = string.slice(4, 11);
+    //   m       i   p   s   u   m
+    //   6   3   6   6   6   6   6
+    const sliced = string.slice(4, 11);
 
-  //   expect(sliced.offsetAtGlyphIndex(0)).toBeCloseTo(0);
-  //   expect(sliced.offsetAtGlyphIndex(1)).toBeCloseTo(6, 2);
-  //   expect(sliced.offsetAtGlyphIndex(4)).toBeCloseTo(21, 2);
-  //   expect(sliced.offsetAtGlyphIndex(5)).toBeCloseTo(27, 2);
-  //   expect(sliced.offsetAtGlyphIndex(6)).toBeCloseTo(33, 2);
-  // });
+    expect(sliced.offsetAtGlyphIndex(0)).toBeCloseTo(0);
+    expect(sliced.offsetAtGlyphIndex(1)).toBeCloseTo(6, 2);
+    expect(sliced.offsetAtGlyphIndex(4)).toBeCloseTo(21, 2);
+    expect(sliced.offsetAtGlyphIndex(5)).toBeCloseTo(27, 2);
+    expect(sliced.offsetAtGlyphIndex(6)).toBeCloseTo(33, 2);
+  });
 
-  // test('should return correct index of', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct index of', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   expect(string.indexOf('L')).toBe(0);
-  //   expect(string.indexOf('r')).toBe(2);
-  //   expect(string.indexOf('p')).toBe(7);
-  //   expect(string.indexOf('m')).toBe(4);
-  //   expect(string.indexOf('m', 5)).toBe(10);
-  //   expect(string.indexOf('z')).toBe(-1);
-  // });
+    expect(string.indexOf('L')).toBe(0);
+    expect(string.indexOf('r')).toBe(2);
+    expect(string.indexOf('p')).toBe(7);
+    expect(string.indexOf('m')).toBe(4);
+    expect(string.indexOf('m', 5)).toBe(10);
+    expect(string.indexOf('z')).toBe(-1);
+  });
 
-  // test('should return correct index of for sliced strings', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+  test('should return correct index of for sliced strings', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  //   const sliced = string.slice(4, 11);
+    const sliced = string.slice(4, 11);
 
-  //   expect(sliced.indexOf('m')).toBe(0);
-  //   expect(sliced.indexOf(' ')).toBe(1);
-  //   expect(sliced.indexOf('i')).toBe(2);
-  //   expect(sliced.indexOf('s')).toBe(4);
-  //   expect(sliced.indexOf('m', 2)).toBe(6);
-  // });
+    expect(sliced.indexOf('m')).toBe(0);
+    expect(sliced.indexOf(' ')).toBe(1);
+    expect(sliced.indexOf('i')).toBe(2);
+    expect(sliced.indexOf('s')).toBe(4);
+    expect(sliced.indexOf('m', 2)).toBe(6);
+  });
 
-  // test('should return correct unicode category', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lo1.+ '
-  //   });
+  test('should return correct unicode category', () => {
+    const string = createLatinTestString({
+      value: 'Lo1.+ '
+    });
 
-  //   expect(string.getUnicodeCategory(0)).toBe('Lu');
-  //   expect(string.getUnicodeCategory(1)).toBe('Ll');
-  //   expect(string.getUnicodeCategory(2)).toBe('Nd');
-  //   expect(string.getUnicodeCategory(3)).toBe('Po');
-  //   expect(string.getUnicodeCategory(4)).toBe('Sm');
-  //   expect(string.getUnicodeCategory(5)).toBe('Zs');
-  // });
+    expect(string.getUnicodeCategory(0)).toBe('Lu');
+    expect(string.getUnicodeCategory(1)).toBe('Ll');
+    expect(string.getUnicodeCategory(2)).toBe('Nd');
+    expect(string.getUnicodeCategory(3)).toBe('Po');
+    expect(string.getUnicodeCategory(4)).toBe('Sm');
+    expect(string.getUnicodeCategory(5)).toBe('Zs');
+  });
 
-  // test('should return if is white space for index', () => {
-  //   const string = createLatinTestString({ value: 'L ' });
+  test('should return if is white space for index', () => {
+    const string = createLatinTestString({ value: 'L ' });
 
-  //   expect(string.isWhiteSpace(0)).toBeFalsy();
-  //   expect(string.isWhiteSpace(1)).toBeTruthy();
-  // });
+    expect(string.isWhiteSpace(0)).toBeFalsy();
+    expect(string.isWhiteSpace(1)).toBeTruthy();
+  });
 
-  // test('should return if is white space for index for sliced string', () => {
-  //   const string = createLatinTestString({ value: 'someL ' });
+  test('should return if is white space for index for sliced string', () => {
+    const string = createLatinTestString({ value: 'someL ' });
 
-  //   const sliced = string.slice(4, string.length);
+    const sliced = string.slice(4, string.length);
 
-  //   expect(sliced.isWhiteSpace(0)).toBeFalsy();
-  //   expect(sliced.isWhiteSpace(1)).toBeTruthy();
-  // });
+    expect(sliced.isWhiteSpace(0)).toBeFalsy();
+    expect(sliced.isWhiteSpace(1)).toBeTruthy();
+  });
 
-  // test('should successfully insert glyph', () => {
-  //   const char = 0x002d; // "-"
-  //   const string = createLatinTestString({ value: 'Lorem ipsum', runs: [[0, 6], [6, 11]] });
+  test('should successfully insert glyph', () => {
+    const char = 0x002d; // "-"
+    const string = createLatinTestString({ value: 'Lorem ipsum', runs: [[0, 6], [6, 11]] });
 
-  //   string.insertGlyph(2, char);
+    string.insertGlyph(2, char);
 
-  //   expect(string.start).toBe(0);
-  //   expect(string.end).toBe(12);
-  //   expect(string.glyphRuns[0].start).toBe(0);
-  //   expect(string.glyphRuns[0].end).toBe(7);
-  //   expect(string.glyphRuns[1].start).toBe(7);
-  //   expect(string.glyphRuns[1].end).toBe(12);
-  //   expect(string.glyphRuns[0].glyphs[2].id).toBe(45);
+    expect(string.start).toBe(0);
+    expect(string.end).toBe(12);
+    expect(string.glyphRuns[0].start).toBe(0);
+    expect(string.glyphRuns[0].end).toBe(7);
+    expect(string.glyphRuns[1].start).toBe(7);
+    expect(string.glyphRuns[1].end).toBe(12);
+    expect(string.glyphRuns[0].glyphs[2].id).toBe(45);
 
-  //   // Test string indices.
-  //   // The new glyph shouldn't interfer with current indices
-  //   expect(string.glyphRuns[0].stringIndices[2]).toBe(2);
-  //   expect(string.glyphRuns[0].stringIndices[3]).toBe(2);
+    // Test string indices.
+    // The new glyph shouldn't interfer with current indices
+    expect(string.glyphRuns[0].stringIndices[2]).toBe(2);
+    expect(string.glyphRuns[0].stringIndices[3]).toBe(2);
 
-  //   // Test glyph indices.
-  //   // Should increment glyph indices
-  //   expect(string.glyphRuns[0].glyphIndices[1]).toBe(1);
-  //   expect(string.glyphRuns[0].glyphIndices[2]).toBe(3);
-  // });
+    // Test glyph indices.
+    // Should increment glyph indices
+    expect(string.glyphRuns[0].glyphIndices[1]).toBe(1);
+    expect(string.glyphRuns[0].glyphIndices[2]).toBe(3);
+  });
 
-  // test('should successfully insert glyph for sliced strings', () => {
-  //   const char = 0x002d; // "-"
-  //   const string = createLatinTestString({ value: 'Lorem ipsum', runs: [[0, 6], [6, 11]] });
-  //   const sliced = string.slice(4, string.length);
+  test('should successfully insert glyph for sliced strings', () => {
+    const char = 0x002d; // "-"
+    const string = createLatinTestString({ value: 'Lorem ipsum', runs: [[0, 6], [6, 11]] });
+    const sliced = string.slice(4, string.length);
 
-  //   sliced.insertGlyph(2, char);
+    sliced.insertGlyph(2, char);
 
-  //   expect(sliced.start).toBe(4);
-  //   expect(sliced.end).toBe(12);
-  //   expect(sliced._glyphRuns[0].start).toBe(0);
-  //   expect(sliced._glyphRuns[0].end).toBe(6);
-  //   expect(sliced._glyphRuns[1].start).toBe(6);
-  //   expect(sliced._glyphRuns[1].end).toBe(12);
-  //   expect(sliced._glyphRuns[1].glyphs[0].id).toBe(45);
+    expect(sliced.start).toBe(0);
+    expect(sliced.end).toBe(8);
+    expect(sliced.glyphRuns[0].start).toBe(0);
+    expect(sliced.glyphRuns[0].end).toBe(2);
+    expect(sliced.glyphRuns[1].start).toBe(2);
+    expect(sliced.glyphRuns[1].end).toBe(8);
+    expect(sliced.glyphRuns[1].glyphs[0].id).toBe(45);
+  });
 
-  //   // Test string indices.
-  //   // The new glyph shouldn't interfer with current indices
-  //   expect(string._glyphRuns[1].stringIndices[0]).toBe(0);
-  //   expect(string._glyphRuns[1].stringIndices[1]).toBe(0);
-  // });
+  test('should be able to iterate through glyph runs', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  // test('should be able to iterate through glyph runs', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+    const glyphs = [];
+    const indices = [];
+    const positions = [];
+    const xs = [];
 
-  //   const glyphs = [];
-  //   const indices = [];
-  //   const positions = [];
-  //   const xs = [];
+    for (const { position, x, index, glyph } of string) {
+      glyphs.push(glyph.id);
+      indices.push(index);
+      positions.push(round(position.xAdvance));
+      xs.push(round(x));
+    }
 
-  //   for (const { position, x, index, glyph } of string) {
-  //     glyphs.push(glyph.id);
-  //     indices.push(index);
-  //     positions.push(round(position.xAdvance));
-  //     xs.push(round(x));
-  //   }
+    expect(glyphs).toEqual([76, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109]);
+    expect(indices).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(positions).toEqual([6, 6, 6, 6, 6, 3, 6, 6, 6, 6, 6]);
+    expect(xs).toEqual([0, 6, 12, 18, 24, 30, 33, 39, 45, 51, 57]);
+  });
 
-  //   expect(glyphs).toEqual([76, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109]);
-  //   expect(indices).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  //   expect(positions).toEqual([6, 6, 6, 6, 6, 3, 6, 6, 6, 6, 6]);
-  //   expect(xs).toEqual([0, 6, 12, 18, 24, 30, 33, 39, 45, 51, 57]);
-  // });
+  test('should be able to iterate through glyph runs for sliced string', () => {
+    const string = createLatinTestString({
+      value: 'Lorem ipsum',
+      runs: [[0, 6], [6, 11]]
+    });
 
-  // test('should be able to iterate through glyph runs for sliced string', () => {
-  //   const string = createLatinTestString({
-  //     value: 'Lorem ipsum',
-  //     runs: [[0, 6], [6, 11]]
-  //   });
+    const sliced = string.slice(4, 8);
 
-  //   const sliced = string.slice(4, 8);
+    const glyphs = [];
+    const indices = [];
+    const positions = [];
+    const xs = [];
 
-  //   const glyphs = [];
-  //   const indices = [];
-  //   const positions = [];
-  //   const xs = [];
+    for (const { position, x, index, glyph } of sliced) {
+      glyphs.push(glyph.id);
+      indices.push(index);
+      positions.push(round(position.xAdvance));
+      xs.push(round(x));
+    }
 
-  //   for (const { position, x, index, glyph } of sliced) {
-  //     glyphs.push(glyph.id);
-  //     indices.push(index);
-  //     positions.push(round(position.xAdvance));
-  //     xs.push(round(x));
-  //   }
-
-  //   expect(glyphs).toEqual([109, 32, 105, 112]);
-  //   expect(indices).toEqual([4, 5, 6, 7]);
-  //   expect(positions).toEqual([6, 3, 6, 6]);
-  //   expect(xs).toEqual([0, 6, 9, 15]);
-  // });
+    expect(glyphs).toEqual([109, 32, 105, 112]);
+    expect(indices).toEqual([0, 1, 2, 3]);
+    expect(positions).toEqual([6, 3, 6, 6]);
+    expect(xs).toEqual([0, 6, 9, 15]);
+  });
 });

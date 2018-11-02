@@ -64,10 +64,17 @@ const sliceRuns = (glyphRuns, start, end) => {
   return runs;
 };
 
+const normalizeStringIndices = glyphRuns => {
+  glyphRuns.forEach(run => {
+    run.stringIndices = run.stringIndices.map(index => index - run.stringIndices[0]);
+  });
+  return glyphRuns;
+};
+
 class GlyphString {
   constructor(string, glyphRuns = []) {
     this.string = string;
-    this.glyphRuns = glyphRuns;
+    this.glyphRuns = normalizeStringIndices(glyphRuns);
   }
 
   get start() {
@@ -304,7 +311,7 @@ class GlyphString {
 
   insertGlyph(index, codePoint) {
     const runIndex = this.runIndexAtGlyphIndex(index);
-    const run = this._glyphRuns[runIndex];
+    const run = this.glyphRuns[runIndex];
     const { font, fontSize } = run.attributes;
     const glyph = run.attributes.font.glyphForCodePoint(codePoint);
     const scale = fontSize / font.unitsPerEm;
@@ -330,19 +337,19 @@ class GlyphString {
 
     run.end += 1;
 
-    for (let i = runIndex + 1; i < this._glyphRuns.length; i++) {
-      this._glyphRuns[i].start += 1;
-      this._glyphRuns[i].end += 1;
+    for (let i = runIndex + 1; i < this.glyphRuns.length; i++) {
+      this.glyphRuns[i].start += 1;
+      this.glyphRuns[i].end += 1;
     }
 
-    this._glyphRunsCache = null;
+    this.glyphRunsCache = null;
   }
 
   deleteGlyph(index) {
     if (index < 0 || index >= this.length) return;
 
     const runIndex = this.runIndexAtGlyphIndex(index);
-    const run = this._glyphRuns[runIndex];
+    const run = this.glyphRuns[runIndex];
     const glyphIndex = this.start + index - run.start;
 
     if (this._end) this._end -= 1;
@@ -359,12 +366,12 @@ class GlyphString {
 
     run.end--;
 
-    for (let i = runIndex + 1; i < this._glyphRuns.length; i++) {
-      this._glyphRuns[i].start--;
-      this._glyphRuns[i].end--;
+    for (let i = runIndex + 1; i < this.glyphRuns.length; i++) {
+      this.glyphRuns[i].start--;
+      this.glyphRuns[i].end--;
     }
 
-    this._glyphRunsCache = null;
+    this.glyphRunsCache = null;
   }
 
   *[Symbol.iterator]() {

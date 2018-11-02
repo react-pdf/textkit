@@ -310,8 +310,6 @@ const layoutParagraph = engines => (paragraph, container) => {
 };
 
 const typesetter = engines => containers => glyphStrings => {
-  console.log(glyphStrings);
-
   const paragraphs = [...glyphStrings];
 
   const layoutColumn = container => column => {
