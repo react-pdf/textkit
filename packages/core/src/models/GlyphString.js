@@ -101,12 +101,27 @@ class GlyphString {
     const stringEnd = this.stringIndexForGlyphIndex(end);
     const glyphRuns = this._glyphRuns.map(r => r.copy());
 
-    return new GlyphString(
+    const result = new GlyphString(
       this.string.slice(stringStart, stringEnd),
       glyphRuns,
       start + this.start,
       end + this.start
     );
+
+    // Ligature splitting. If happens to slice in a ligature, we split create
+    const previousGlyph = this.glyphAtIndex(start - 1);
+    const lastGlyph = this.glyphAtIndex(end - 1);
+
+    if (lastGlyph && lastGlyph.isLigature) {
+      result.deleteGlyph(result.length - 1);
+      result.insertGlyph(result.length, lastGlyph.codePoints[0]);
+    }
+
+    if (previousGlyph && previousGlyph.isLigature) {
+      result.insertGlyph(0, previousGlyph.codePoints[1]);
+    }
+
+    return result;
   }
 
   runIndexAtGlyphIndex(index) {
@@ -346,6 +361,8 @@ class GlyphString {
     const runIndex = this.runIndexAtGlyphIndex(index);
     const run = this._glyphRuns[runIndex];
     const glyphIndex = this.start + index - run.start;
+
+    if (this._end) this._end -= 1;
 
     run.glyphs.splice(glyphIndex, 1);
     run.positions.splice(glyphIndex, 1);
