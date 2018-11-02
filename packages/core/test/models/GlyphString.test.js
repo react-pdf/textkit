@@ -9,18 +9,6 @@ describe('GlyphString', () => {
     expect(string.string).toBe('Lorem ipsum');
   });
 
-  test('should get string end', () => {
-    const string = createLatinTestString({ value: 'Lorem ipsum' });
-
-    expect(string.end).toBe(11);
-  });
-
-  test('should get string end (non latin)', () => {
-    const string = createCamboyanTestString({ value: 'ខ្ញុំអាចញ៉ាំកញ្ចក់បាន' });
-
-    expect(string.end).toBe(16);
-  });
-
   test('should get string length', () => {
     const string = createLatinTestString({ value: 'Lorem ipsum' });
 
@@ -853,8 +841,6 @@ describe('GlyphString', () => {
 
     string.insertGlyph(2, char);
 
-    expect(string.start).toBe(0);
-    expect(string.end).toBe(12);
     expect(string.glyphRuns[0].start).toBe(0);
     expect(string.glyphRuns[0].end).toBe(7);
     expect(string.glyphRuns[1].start).toBe(7);

@@ -7,7 +7,6 @@ import GlyphString from '../models/GlyphString';
 import LineFragment from '../models/LineFragment';
 import ParagraphStyle from '../models/ParagraphStyle';
 import AttributedString from '../models/AttributedString';
-import FontDescriptor from '../models/FontDescriptor';
 
 /**
  * A LayoutEngine is the main object that performs text layout.
@@ -29,13 +28,13 @@ const compose = (...fns) => x => fns.reduceRight((y, f) => f(y), x);
 const map = fn => (array, ...other) => array.map((e, index) => fn(e, ...other, index));
 
 const applyDefaultStyles = () => attributedString => {
+  console.time('applyDefaultStyles');
   const runs = attributedString.runs.map(({ start, end, attributes }) => ({
     start,
     end,
     attributes: {
       color: attributes.color || 'black',
       backgroundColor: attributes.backgroundColor || null,
-      fontDescriptor: FontDescriptor.fromAttributes(attributes),
       font: attributes.font || null,
       fontSize: attributes.fontSize || 12,
       lineHeight: attributes.lineHeight || null,
@@ -58,7 +57,10 @@ const applyDefaultStyles = () => attributedString => {
     }
   }));
 
-  return new AttributedString(attributedString.string, runs);
+  const result = new AttributedString(attributedString.string, runs);
+
+  console.timeEnd('applyDefaultStyles');
+  return result;
 };
 
 const preprocessRuns = engines => attributedString => {
@@ -66,37 +68,58 @@ const preprocessRuns = engines => attributedString => {
   const scriptRuns = scriptItemization(engines)(attributedString);
   const stringRuns = attributedString.runs.map(run => {
     const {
-      attributes: { font, fontDescriptor, ...attributes }
+      attributes: { font, ...attributes }
     } = run;
     return { ...run, attributes };
   });
 
+  console.time('flattenRuns');
   const runs = flattenRuns([...stringRuns, ...fontRuns, ...scriptRuns]);
-  return new AttributedString(attributedString.string, runs);
+  const result = new AttributedString(attributedString.string, runs);
+  console.timeEnd('flattenRuns');
+  return result;
 };
 
 const fontSubstitution = engines => attributedString => {
+  console.time('fontSubstitution');
   const { string, runs } = attributedString;
-  return engines.fontSubstitutionEngine.getRuns(string, runs);
+  const result = engines.fontSubstitutionEngine.getRuns(string, runs);
+  console.timeEnd('fontSubstitution');
+  return result;
 };
 
 const scriptItemization = engines => attributedString => {
-  const { string } = attributedString;
-  return engines.scriptItemizer.getRuns(string);
+  console.time('scriptItemization');
+  const result = engines.scriptItemizer.getRuns(attributedString.string);
+  console.timeEnd('scriptItemization');
+
+  return result;
 };
 
 const splitParagraphs = () => attributedString => {
-  let index = 0;
-  const paragraps = attributedString.string.split(/(.*\n{1})/g).filter(Boolean);
+  console.time('splitParagraphs');
+  const res = [];
 
-  return paragraps.map(string => {
-    const paragraph = attributedString.slice(index, index + string.length);
-    index += string.length;
-    return paragraph;
-  });
+  let start = 0;
+  let breakPoint = attributedString.string.indexOf('\n') + 1;
+
+  while (breakPoint > 0) {
+    res.push(attributedString.slice(start, breakPoint));
+    start = breakPoint;
+    breakPoint = attributedString.string.indexOf('\n', breakPoint) + 1;
+  }
+
+  if (start < attributedString.length) {
+    res.push(attributedString.slice(start, attributedString.length));
+  }
+
+  console.timeEnd('splitParagraphs');
+
+  return res;
 };
 
 const wrapWords = engines => attributedString => {
+  console.time('wrapWords');
   const syllables = [];
   const fragments = [];
 
@@ -116,7 +139,9 @@ const wrapWords = engines => attributedString => {
     fragments.push({ string, attributes: run.attributes });
   }
 
-  return { attributedString: AttributedString.fromFragments(fragments), syllables };
+  const result = { attributedString: AttributedString.fromFragments(fragments), syllables };
+  console.timeEnd('wrapWords');
+  return result;
 };
 
 const resolveGlyphIndices = (string, stringIndices) => {
@@ -166,7 +191,7 @@ const stringToGlyphs = attributedString => {
     const res = new GlyphRun(
       glyphIndex,
       glyphEnd,
-      run.attributes,
+      attributes,
       glyphRun.glyphs,
       glyphRun.positions,
       glyphRun.stringIndices,
@@ -177,22 +202,26 @@ const stringToGlyphs = attributedString => {
     return res;
   });
 
-  return new GlyphString(attributedString.string, glyphRuns);
+  const result = new GlyphString(attributedString.string, glyphRuns);
+  console.timeEnd('stringToGlyphs');
+  return result;
 };
 
 const generateGlyphs = () => paragraph => {
-  let start = 0;
-  const syllables = paragraph.syllables.map(syllable => {
-    const syllableString = paragraph.attributedString.slice(start, start + syllable.length);
-    start += syllable.length;
-    return stringToGlyphs(syllableString);
-  });
+  console.time('generateGlyphs');
 
-  return { syllables, value: stringToGlyphs(paragraph.attributedString) };
+  const result = {
+    syllables: paragraph.syllables,
+    value: stringToGlyphs(paragraph.attributedString)
+  };
+
+  console.timeEnd('generateGlyphs');
+  return result;
 };
 
-const resolveAttachments = () => glyphString => {
-  for (const glyphRun of glyphString.glyphRuns) {
+const resolveAttachments = () => paragraph => {
+  console.time('resolveAttachments');
+  for (const glyphRun of paragraph.value.glyphRuns) {
     const { font, attachment } = glyphRun.attributes;
     if (!attachment) continue;
     const objectReplacement = font.glyphForCodePoint(0xfffc);
@@ -205,11 +234,14 @@ const resolveAttachments = () => glyphString => {
     }
   }
 
-  return glyphString;
+  console.timeEnd('resolveAttachments');
+
+  return paragraph;
 };
 
-const resolveYOffset = () => glyphString => {
-  for (const glyphRun of glyphString.glyphRuns) {
+const resolveYOffset = () => paragraph => {
+  console.time('resolveYOffset');
+  for (const glyphRun of paragraph.value.glyphRuns) {
     const { font, yOffset } = glyphRun.attributes;
     if (!yOffset) continue;
     for (let i = 0; i < glyphRun.length; i++) {
@@ -217,7 +249,8 @@ const resolveYOffset = () => glyphString => {
     }
   }
 
-  return glyphString;
+  console.timeEnd('resolveYOffset');
+  return paragraph;
 };
 
 const resolveColumns = container => {
@@ -288,7 +321,10 @@ const finalizeLineFragment = engines => (line, style, isLastFragment, isTruncate
 const layoutParagraph = engines => (paragraph, container) => {
   const { value, syllables } = paragraph;
   const style = new ParagraphStyle();
+
+  console.time('linebreaking');
   const lines = engines.lineBreaker.suggestLineBreak(value, syllables, container.width, style);
+  console.timeEnd('linebreaking');
 
   let currentY = container.y;
   const lineFragments = lines.map(string => {
@@ -302,9 +338,9 @@ const layoutParagraph = engines => (paragraph, container) => {
     return new LineFragment(lineBox, string);
   });
 
-  lineFragments.forEach((lineFragment, i) => {
-    finalizeLineFragment(engines)(lineFragment, style, i === lineFragments.length - 1);
-  });
+  // lineFragments.forEach((lineFragment, i) => {
+  //   finalizeLineFragment(engines)(lineFragment, style, i === lineFragments.length - 1);
+  // });
 
   return new Block(lineFragments);
 };
@@ -318,7 +354,7 @@ const typesetter = engines => containers => glyphStrings => {
 
     while (nextParagraph) {
       const block = layoutParagraph(engines)(nextParagraph, paragraphRect);
-      container.blocks.push(block);
+      // container.blocks.push(block);
       paragraphRect = paragraphRect.copy();
       paragraphRect.y += block.height;
       paragraphRect.height -= block.height;
@@ -342,17 +378,22 @@ export default class LayoutEngine {
   }
 
   layout(attributedString, containers) {
-    console.time('layout');
+    // let iteration = 10;
+
+    // while (iteration > 0) {
+    // console.time('layout');
     compose(
       typesetter(this.engines)(containers),
-      // map(resolveYOffset(this.engines)),
-      // map(resolveAttachments(this.engines)),
+      map(resolveYOffset(this.engines)),
+      map(resolveAttachments(this.engines)),
       map(generateGlyphs(this.engines)),
       map(wrapWords(this.engines)),
       splitParagraphs(this.engines),
       preprocessRuns(this.engines),
       applyDefaultStyles(this.engines)
     )(attributedString);
-    console.timeEnd('layout');
+    // console.timeEnd('layout');
+    //   iteration--;
+    // }
   }
 }
