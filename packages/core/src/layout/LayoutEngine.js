@@ -318,17 +318,24 @@ const finalizeLineFragment = engines => (line, style, isLastFragment, isTruncate
   engines.decorationEngine.createDecorationLines(line);
 };
 
-const layoutParagraph = engines => (paragraph, container) => {
+const layoutParagraph = engines => (paragraph, container, lineRect) => {
   const { value, syllables } = paragraph;
-  const style = new ParagraphStyle();
+  const style = new ParagraphStyle(value.glyphRuns[0].attributes);
+
+  // Guess the line height using the full line before intersecting with the container.
+  // Generate line fragment rectangles by intersecting with the container.
+  lineRect.height = value.slice(0, value.glyphIndexAtOffset(lineRect.width)).height;
+  const fragmentRects = engines.lineFragmentGenerator.generateFragments(lineRect, container);
+
+  console.log(fragmentRects);
 
   console.time('linebreaking');
-  const lines = engines.lineBreaker.suggestLineBreak(value, syllables, container.width, style);
+  const lines = engines.lineBreaker.suggestLineBreak(value, syllables, lineRect.width, style);
   console.timeEnd('linebreaking');
 
-  let currentY = container.y;
+  let currentY = lineRect.y;
   const lineFragments = lines.map(string => {
-    const lineBox = container.copy();
+    const lineBox = lineRect.copy();
     const lineHeight = Math.max(string.height, style.lineHeight);
 
     lineBox.y = currentY;
@@ -338,9 +345,11 @@ const layoutParagraph = engines => (paragraph, container) => {
     return new LineFragment(lineBox, string);
   });
 
-  // lineFragments.forEach((lineFragment, i) => {
-  //   finalizeLineFragment(engines)(lineFragment, style, i === lineFragments.length - 1);
-  // });
+  console.time('finalizeLineFragment');
+  lineFragments.forEach((lineFragment, i) => {
+    finalizeLineFragment(engines)(lineFragment, style, i === lineFragments.length - 1);
+  });
+  console.timeEnd('finalizeLineFragment');
 
   return new Block(lineFragments);
 };
@@ -348,25 +357,23 @@ const layoutParagraph = engines => (paragraph, container) => {
 const typesetter = engines => containers => glyphStrings => {
   const paragraphs = [...glyphStrings];
 
-  const layoutColumn = container => column => {
+  const layoutColumn = (column, container) => {
     let paragraphRect = column.copy();
     let nextParagraph = paragraphs.shift();
 
-    while (nextParagraph) {
-      const block = layoutParagraph(engines)(nextParagraph, paragraphRect);
-      // container.blocks.push(block);
-      paragraphRect = paragraphRect.copy();
-      paragraphRect.y += block.height;
-      paragraphRect.height -= block.height;
-      nextParagraph = paragraphs.shift();
-    }
+    // while (nextParagraph) {
+    const block = layoutParagraph(engines)(nextParagraph, container, paragraphRect);
+    container.blocks.push(block);
+    paragraphRect = paragraphRect.copy();
+    paragraphRect.y += block.height;
+    paragraphRect.height -= block.height;
+    nextParagraph = paragraphs.shift();
+    // }
   };
 
   const layoutContainer = container => {
-    compose(
-      map(layoutColumn(container)),
-      resolveColumns
-    )(container);
+    const columns = resolveColumns(container);
+    const layout = layoutColumn(columns[0], container);
   };
 
   return containers.map(layoutContainer);
