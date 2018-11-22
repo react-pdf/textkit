@@ -123,8 +123,11 @@ class GlyphString {
       result.insertGlyph(result.length, lastGlyph.codePoints[0]);
     }
 
+    // Add the ligature remaining chars to result
     if (previousGlyph && previousGlyph.isLigature) {
-      result.insertGlyph(0, previousGlyph.codePoints[1]);
+      for (let i = 1; i < previousGlyph.codePoints.length; i++) {
+        result.insertGlyph(i - 1, previousGlyph.codePoints[i]);
+      }
     }
 
     return result;
