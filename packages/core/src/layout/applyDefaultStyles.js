@@ -1,7 +1,7 @@
 import AttributedString from '../models/AttributedString';
 
-const applyDefaultStyles = () => attributedString => {
-  const runs = attributedString.runs.map(({ start, end, attributes }) => ({
+const applyDefaultStyles = () => ({ string = '', runs = [] } = {}) => {
+  const styledRuns = runs.map(({ start, end, attributes }) => ({
     start,
     end,
     attributes: {
@@ -45,7 +45,7 @@ const applyDefaultStyles = () => attributedString => {
     }
   }));
 
-  return new AttributedString(attributedString.string, runs);
+  return new AttributedString(string, styledRuns);
 };
 
 export default applyDefaultStyles;
