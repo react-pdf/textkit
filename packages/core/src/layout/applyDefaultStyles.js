@@ -28,6 +28,7 @@ const applyDefaultStyles = () => ({ string = '', runs = [] } = {}) => {
       marginLeft: attributes.marginLeft || attributes.margin || 0,
       marginRight: attributes.marginRight || attributes.margin || 0,
       maxLines: attributes.maxLines || Infinity,
+      opacity: attributes.opacity || 1,
       paddingTop: attributes.paddingTop || attributes.padding || 0,
       paragraphSpacing: attributes.paragraphSpacing || 0,
       truncationMode: attributes.truncationMode || (attributes.truncate ? 'right' : null),
