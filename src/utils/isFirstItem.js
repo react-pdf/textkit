@@ -7,12 +7,6 @@ import * as R from 'ramda';
  * @param  {any}  value
  * @return {boolean} is first?
  */
-const isFirstItem = R.converge(R.equals, [
-  R.nthArg(1),
-  R.compose(
-    R.head,
-    R.nthArg(0)
-  )
-]);
+const isFirstItem = R.useWith(R.equals, [R.head, R.identity]);
 
 export default isFirstItem;

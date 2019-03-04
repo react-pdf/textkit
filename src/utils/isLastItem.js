@@ -7,12 +7,6 @@ import * as R from 'ramda';
  * @param  {any}  value
  * @return {boolean} is last?
  */
-const isLastItem = R.converge(R.equals, [
-  R.nthArg(1),
-  R.compose(
-    R.last,
-    R.nthArg(0)
-  )
-]);
+const isLastItem = R.useWith(R.equals, [R.last, R.identity]);
 
 export default isLastItem;

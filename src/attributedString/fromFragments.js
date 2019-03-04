@@ -13,7 +13,7 @@ const fromFragments = fragments => {
     const run = {
       start: offset,
       end: offset + fragment.string.length,
-      attributes: fragment.attributes
+      attributes: fragment.attributes || {}
     };
     offset += fragment.string.length;
 
