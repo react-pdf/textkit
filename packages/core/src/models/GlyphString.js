@@ -77,23 +77,23 @@ class GlyphString {
     this.glyphRuns = normalizeStringIndices(glyphRuns);
   }
 
-  get start() {
-    if (this.glyphRuns.length === 0) return 0;
-    return this.glyphRuns[0].start;
-  }
+  // get start() {
+  //   if (this.glyphRuns.length === 0) return 0;
+  //   return this.glyphRuns[0].start;
+  // }
 
-  get end() {
-    if (this.glyphRuns.length === 0) return 0;
-    return this.glyphRuns[this.glyphRuns.length - 1].end;
-  }
+  // get end() {
+  //   if (this.glyphRuns.length === 0) return 0;
+  //   return this.glyphRuns[this.glyphRuns.length - 1].end;
+  // }
 
-  get length() {
-    return this.end - this.start;
-  }
+  // get length() {
+  //   return this.end - this.start;
+  // }
 
-  get advanceWidth() {
-    return this.glyphRuns.reduce((acc, run) => acc + run.advanceWidth, 0);
-  }
+  // get advanceWidth() {
+  //   return this.glyphRuns.reduce((acc, run) => acc + run.advanceWidth, 0);
+  // }
 
   get height() {
     return this.glyphRuns.reduce((acc, run) => Math.max(acc, run.height), 0);

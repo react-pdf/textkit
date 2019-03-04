@@ -39,14 +39,14 @@ class GlyphRun extends Run {
     return this.glyphIndices.length - 1;
   }
 
-  get advanceWidth() {
-    let width = 0;
-    for (const position of this.positions) {
-      width += position.xAdvance;
-    }
+  // get advanceWidth() {
+  //   let width = 0;
+  //   for (const position of this.positions) {
+  //     width += position.xAdvance;
+  //   }
 
-    return width;
-  }
+  //   return width;
+  // }
 
   get ascent() {
     const ascent = this.attributes.font.ascent * this.scale;
@@ -58,13 +58,13 @@ class GlyphRun extends Run {
     return ascent;
   }
 
-  get descent() {
-    return this.attributes.font.descent * this.scale;
-  }
+  // get descent() {
+  //   return this.attributes.font.descent * this.scale;
+  // }
 
-  get lineGap() {
-    return this.attributes.font.lineGap * this.scale;
-  }
+  // get lineGap() {
+  //   return this.attributes.font.lineGap * this.scale;
+  // }
 
   get height() {
     return this.attributes.lineHeight || this.ascent - this.descent + this.lineGap;
