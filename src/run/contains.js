@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+import isBetween from '../utils/isBetween';
+
 /**
  * Checks if run contains value
  *
@@ -7,6 +9,6 @@ import * as R from 'ramda';
  * @param  {Object}  run
  * @return {boolean} runs contains value
  */
-const contains = n => R.both(R.o(R.gte(n), R.prop('start')), R.o(R.lt(n), R.prop('end')));
+const contains = isBetween(R.prop('start'), R.prop('end'));
 
 export default contains;

@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+import isBetween from '../utils/isBetween';
+
 /**
  * Get run index that contains passed index
  *
@@ -7,7 +9,6 @@ import * as R from 'ramda';
  * @param  {Array}  runs array
  * @return {Array} run index
  */
-const runIndexAt = (n, runs) =>
-  R.findIndex(R.both(R.o(R.gte(n), R.prop('start')), R.o(R.lt(n), R.prop('end'))))(runs);
+const runIndexAt = (n, runs) => R.findIndex(isBetween(R.prop('start'), R.prop('end'), n))(runs);
 
 export default R.curryN(2, runIndexAt);

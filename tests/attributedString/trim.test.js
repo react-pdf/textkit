@@ -38,7 +38,9 @@ describe('attributeString trim operator', () => {
     const result = trim(string);
 
     expect(result).not.toBe(string);
-    expect(result).toEqual(string);
+    expect(result).toHaveProperty('string', 'hello world');
+    expect(result.runs[0]).toHaveProperty('start', 0);
+    expect(result.runs[0]).toHaveProperty('end', 11);
   });
 
   test('should trim multipe runs', () => {

@@ -77,32 +77,39 @@ class GlyphString {
     this.glyphRuns = normalizeStringIndices(glyphRuns);
   }
 
-  // get start() {
-  //   if (this.glyphRuns.length === 0) return 0;
-  //   return this.glyphRuns[0].start;
-  // }
+  // DONE
+  get start() {
+    if (this.glyphRuns.length === 0) return 0;
+    return this.glyphRuns[0].start;
+  }
 
-  // get end() {
-  //   if (this.glyphRuns.length === 0) return 0;
-  //   return this.glyphRuns[this.glyphRuns.length - 1].end;
-  // }
+  // DONE
+  get end() {
+    if (this.glyphRuns.length === 0) return 0;
+    return this.glyphRuns[this.glyphRuns.length - 1].end;
+  }
 
-  // get length() {
-  //   return this.end - this.start;
-  // }
+  // DONE
+  get length() {
+    return this.end - this.start;
+  }
 
-  // get advanceWidth() {
-  //   return this.glyphRuns.reduce((acc, run) => acc + run.advanceWidth, 0);
-  // }
+  // DONE
+  get advanceWidth() {
+    return this.glyphRuns.reduce((acc, run) => acc + run.advanceWidth, 0);
+  }
 
+  // DONE
   get height() {
     return this.glyphRuns.reduce((acc, run) => Math.max(acc, run.height), 0);
   }
 
+  // DONE
   get ascent() {
     return this.glyphRuns.reduce((acc, run) => Math.max(acc, run.ascent), 0);
   }
 
+  // DONE
   get descent() {
     return this.glyphRuns.reduce((acc, run) => Math.min(acc, run.descent), 0);
   }
@@ -377,6 +384,7 @@ class GlyphString {
     this.glyphRunsCache = null;
   }
 
+  // DONE
   copy() {
     return new GlyphString(this.string, this.glyphRuns.map(run => run.copy()));
   }

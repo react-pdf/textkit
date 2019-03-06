@@ -20,20 +20,20 @@ describe('run descent operator', () => {
   });
 
   test('should return 0 if unknown font unitsPerEm', () => {
-    const run = { attributes: { fontSize: 12, font: { decent: 10 } } };
+    const run = { attributes: { fontSize: 12, font: { descent: -10 } } };
 
-    expect(descent(run)).toBe(0);
+    expect(Math.abs(descent(run))).toBe(0);
   });
 
-  test('should return 0 if unknown font decent', () => {
+  test('should return 0 if unknown font descent', () => {
     const run = { attributes: { fontSize: 12, font: { unitsPerEm: 2 } } };
 
     expect(descent(run)).toBe(0);
   });
 
   test('should return correct font descent', () => {
-    const run = { attributes: { fontSize: 12, font: { descent: 10, unitsPerEm: 2 } } };
+    const run = { attributes: { fontSize: 12, font: { descent: -10, unitsPerEm: 2 } } };
 
-    expect(descent(run)).toBe((10 * 12) / 2);
+    expect(descent(run)).toBe(-(10 * 12) / 2);
   });
 });

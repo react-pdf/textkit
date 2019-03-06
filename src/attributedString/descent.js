@@ -1,4 +1,6 @@
-import sumRuns from './sumRuns';
+import * as R from 'ramda';
+
+import reduce from './reduce';
 import runDescent from '../run/descent';
 
 /**
@@ -7,6 +9,6 @@ import runDescent from '../run/descent';
  * @param {Object} attributed string
  * @return {number} descent
  */
-const descent = sumRuns(runDescent);
+const descent = reduce(R.min, runDescent);
 
 export default descent;

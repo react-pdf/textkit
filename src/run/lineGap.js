@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 
 import scale from './scale';
-// return this.attributes.font.lineGap * this.scale;
 
 /**
  * Get run lineGap

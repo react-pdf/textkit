@@ -27,6 +27,7 @@ class GlyphRun extends Run {
     }
   }
 
+  // DONE
   get length() {
     return this.end - this.start;
   }
@@ -39,15 +40,17 @@ class GlyphRun extends Run {
     return this.glyphIndices.length - 1;
   }
 
-  // get advanceWidth() {
-  //   let width = 0;
-  //   for (const position of this.positions) {
-  //     width += position.xAdvance;
-  //   }
+  // DONE
+  get advanceWidth() {
+    let width = 0;
+    for (const position of this.positions) {
+      width += position.xAdvance;
+    }
 
-  //   return width;
-  // }
+    return width;
+  }
 
+  // DONE
   get ascent() {
     const ascent = this.attributes.font.ascent * this.scale;
 
@@ -58,14 +61,17 @@ class GlyphRun extends Run {
     return ascent;
   }
 
-  // get descent() {
-  //   return this.attributes.font.descent * this.scale;
-  // }
+  // DONE
+  get descent() {
+    return this.attributes.font.descent * this.scale;
+  }
 
-  // get lineGap() {
-  //   return this.attributes.font.lineGap * this.scale;
-  // }
+  // DONE
+  get lineGap() {
+    return this.attributes.font.lineGap * this.scale;
+  }
 
+  // DONE
   get height() {
     return this.attributes.lineHeight || this.ascent - this.descent + this.lineGap;
   }
@@ -95,6 +101,7 @@ class GlyphRun extends Run {
     );
   }
 
+  // DONE
   copy() {
     return new GlyphRun(
       this.start,

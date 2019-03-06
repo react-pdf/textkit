@@ -1,7 +1,12 @@
 import * as R from 'ramda';
 
 import scale from './scale';
-// return this.attributes.font.descent * this.scale;
+
+const getFontDescent = R.ifElse(
+  R.has('attributes'),
+  R.pathOr(0, ['attributes', 'font', 'descent']),
+  R.always(0)
+);
 
 /**
  * Get run descent
@@ -9,9 +14,6 @@ import scale from './scale';
  * @param  {Object}  run
  * @return {number} descent
  */
-const descent = R.converge(R.multiply, [
-  scale,
-  R.ifElse(R.has('attributes'), R.pathOr(0, ['attributes', 'font', 'descent']), R.always(0))
-]);
+const descent = R.converge(R.multiply, [scale, getFontDescent]);
 
 export default descent;
