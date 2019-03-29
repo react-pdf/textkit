@@ -27,7 +27,8 @@ describe('run append glyph operator', () => {
 
     const result = append(null, run);
 
-    expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 3, 4]);
+    expect(result).toHaveProperty('start', 0);
+    expect(result).toHaveProperty('end', 5);
     expect(R.pluck('id', result.glyphs)).toEqual([76, 111, 114, 101, 109]);
     expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 9]);
   });
@@ -56,6 +57,8 @@ describe('run append glyph operator', () => {
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
     const result = append(glyph, run);
 
+    expect(result).toHaveProperty('start', 0);
+    expect(result).toHaveProperty('end', 6);
     expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 3, 4, 5]);
     expect(R.pluck('id', result.glyphs)).toEqual([76, 111, 114, 101, 109, 105]);
     expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 9, 10]);
@@ -191,7 +194,7 @@ describe('run append code point operator', () => {
 
     expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 3, 4, 5]);
     expect(R.pluck('id', result.glyphs)).toEqual([76, 111, 114, 101, 109, 105]);
-    expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 9, 10]);
+    expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 9, 8]);
   });
 
   test('should append ligature code point at run', () => {
@@ -242,7 +245,7 @@ describe('run append code point operator', () => {
 
     expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 2, 3, 4]);
     expect(R.pluck('id', result.glyphs)).toEqual([76, 111, 64257, 109, 105]);
-    expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 10]);
+    expect(R.pluck('xAdvance', result.positions)).toEqual([5, 6, 7, 8, 8]);
   });
 
   test('should append ligature code point before run ligature', () => {

@@ -191,7 +191,7 @@ describe('run prepend code point operator', () => {
 
     expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 3, 4, 5]);
     expect(R.pluck('id', result.glyphs)).toEqual([105, 76, 111, 114, 101, 109]);
-    expect(R.pluck('xAdvance', result.positions)).toEqual([10, 5, 6, 7, 8, 9]);
+    expect(R.pluck('xAdvance', result.positions)).toEqual([8, 5, 6, 7, 8, 9]);
   });
 
   test('should prepend ligature code point at run', () => {
@@ -242,7 +242,7 @@ describe('run prepend code point operator', () => {
 
     expect(result).toHaveProperty('glyphIndices', [0, 1, 2, 3, 3, 4]);
     expect(R.pluck('id', result.glyphs)).toEqual([105, 76, 111, 64257, 109]);
-    expect(R.pluck('xAdvance', result.positions)).toEqual([10, 5, 6, 7, 8]);
+    expect(R.pluck('xAdvance', result.positions)).toEqual([8, 5, 6, 7, 8]);
   });
 
   test('should prepend ligature code point before run ligature', () => {

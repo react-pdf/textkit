@@ -15,14 +15,14 @@ import count from '../utils/count';
  * @param  {Object}  run
  * @return {number} ligature offset
  */
-const offset = (index, string) => {
-  const value = R.pathOr(null, ['glyphIndices', index], string);
+const offset = (index, run) => {
+  const value = R.pathOr(null, ['glyphIndices', index], run);
 
   return R.compose(
     count(value),
     R.slice(0, index),
     R.propOr([], 'glyphIndices')
-  )(string);
+  )(run);
 };
 
 export default R.curryN(2, offset);

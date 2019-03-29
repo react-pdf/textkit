@@ -12,7 +12,7 @@ import * as R from 'ramda';
  */
 const slice = (start, end, font, glyph) => {
   if (!glyph) return [];
-  if (end === 0) return [glyph];
+  if (start === end) return [];
 
   const codePoints = R.slice(start, end, glyph.codePoints);
   const string = String.fromCodePoint(...codePoints);

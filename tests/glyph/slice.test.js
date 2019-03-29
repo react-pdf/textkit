@@ -2,6 +2,13 @@ import slice from '../../src/glyph/slice';
 import font from '../internal/font';
 
 describe('glyph slice operator', () => {
+  test('should return no glyph for empty slice', () => {
+    const glyph = { id: 76, codePoints: [76] };
+    const sliced = slice(0, 0, font, glyph);
+
+    expect(sliced).toHaveLength(0);
+  });
+
   test('should return same glyph for exact slice', () => {
     const glyph = { id: 76, codePoints: [76] };
     const sliced = slice(0, 1, font, glyph);
@@ -66,7 +73,7 @@ describe('glyph slice operator', () => {
   });
 
   test('should break long ligature glyph in 2nd char at start', () => {
-    const glyph = { id: 64259, codePoints: [102, 102, 105] }; // fi;
+    const glyph = { id: 64259, codePoints: [102, 102, 105] }; // ffi;
     const sliced = slice(0, 2, font, glyph);
 
     expect(sliced).toHaveLength(2);
