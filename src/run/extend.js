@@ -7,10 +7,10 @@ import * as R from 'ramda';
  * @param  {Object}  run
  * @return {boolean} extended run
  */
-const estend = n =>
+const extend = n =>
   R.evolve({
     start: R.min(n),
     end: R.max(n)
   });
 
-export default estend;
+export default extend;
