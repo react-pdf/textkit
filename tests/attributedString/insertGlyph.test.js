@@ -255,6 +255,46 @@ describe('attributeString insertGlyph operator', () => {
     expect(R.pluck('id', result.runs[0].glyphs)).toEqual([76, 111, 64257, 105, 101, 109]);
   });
 
+  test('should insert glyph at beggining of first run of two run string', () => {
+    const string = {
+      string: 'lorem',
+      runs: [
+        {
+          start: 0,
+          end: 2,
+          glyphs: [
+            { id: 76, codePoints: [76] }, // l
+            { id: 111, codePoints: [111] } // o
+          ],
+          glyphIndices: [0, 1]
+        },
+        {
+          start: 2,
+          end: 5,
+          glyphs: [
+            { id: 114, codePoints: [114] }, // r
+            { id: 101, codePoints: [101] }, // e
+            { id: 109, codePoints: [109] } // m
+          ],
+          glyphIndices: [0, 1, 2]
+        }
+      ]
+    };
+    const glyph = { id: 105, codePoints: [105] };
+    const result = insertGlyph(0, glyph, string);
+
+    expect(result).toHaveProperty('string', 'ilorem');
+    expect(result.runs).toHaveLength(2);
+
+    expect(result.runs[0]).toHaveProperty('start', 0);
+    expect(result.runs[0]).toHaveProperty('end', 3);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([105, 76, 111]);
+
+    expect(result.runs[1]).toHaveProperty('start', 3);
+    expect(result.runs[1]).toHaveProperty('end', 6);
+    expect(R.pluck('id', result.runs[1].glyphs)).toEqual([114, 101, 109]);
+  });
+
   test('should insert glyph on first run of two run string', () => {
     const string = {
       string: 'lorem',
@@ -295,6 +335,46 @@ describe('attributeString insertGlyph operator', () => {
     expect(R.pluck('id', result.runs[1].glyphs)).toEqual([114, 101, 109]);
   });
 
+  test('should insert glyph at beggining of second run of two run string', () => {
+    const string = {
+      string: 'lorem',
+      runs: [
+        {
+          start: 0,
+          end: 2,
+          glyphs: [
+            { id: 76, codePoints: [76] }, // l
+            { id: 111, codePoints: [111] } // o
+          ],
+          glyphIndices: [0, 1]
+        },
+        {
+          start: 2,
+          end: 5,
+          glyphs: [
+            { id: 114, codePoints: [114] }, // r
+            { id: 101, codePoints: [101] }, // e
+            { id: 109, codePoints: [109] } // m
+          ],
+          glyphIndices: [0, 1, 2]
+        }
+      ]
+    };
+    const glyph = { id: 105, codePoints: [105] };
+    const result = insertGlyph(0, glyph, string);
+
+    expect(result).toHaveProperty('string', 'ilorem');
+    expect(result.runs).toHaveLength(2);
+
+    expect(result.runs[0]).toHaveProperty('start', 0);
+    expect(result.runs[0]).toHaveProperty('end', 3);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([105, 76, 111]);
+
+    expect(result.runs[1]).toHaveProperty('start', 3);
+    expect(result.runs[1]).toHaveProperty('end', 6);
+    expect(R.pluck('id', result.runs[1].glyphs)).toEqual([114, 101, 109]);
+  });
+
   test('should insert glyph on second run of two run string', () => {
     const string = {
       string: 'lorem',
@@ -321,9 +401,9 @@ describe('attributeString insertGlyph operator', () => {
       ]
     };
     const glyph = { id: 105, codePoints: [105] };
-    const result = insertGlyph(4, glyph, string);
+    const result = insertGlyph(2, glyph, string);
 
-    expect(result).toHaveProperty('string', 'loreim');
+    expect(result).toHaveProperty('string', 'loirem');
     expect(result.runs).toHaveLength(2);
 
     expect(result.runs[0]).toHaveProperty('start', 0);
@@ -332,7 +412,7 @@ describe('attributeString insertGlyph operator', () => {
 
     expect(result.runs[1]).toHaveProperty('start', 2);
     expect(result.runs[1]).toHaveProperty('end', 6);
-    expect(R.pluck('id', result.runs[1].glyphs)).toEqual([114, 101, 105, 109]);
+    expect(R.pluck('id', result.runs[1].glyphs)).toEqual([105, 114, 101, 109]);
   });
 
   test('should insert ligature glyph on first run of two run string', () => {

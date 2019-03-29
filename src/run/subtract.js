@@ -7,10 +7,10 @@ import * as R from 'ramda';
  * @param  {Object}  run
  * @return {Object} subtracted run
  */
-const subtract = (n, string) =>
+const subtract = (n, run) =>
   R.evolve({
     start: R.subtract(R.__, n),
     end: R.subtract(R.__, n)
-  })(string);
+  })(run);
 
 export default R.curryN(2, subtract);
