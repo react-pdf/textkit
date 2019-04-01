@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 import length from './length';
+import normalizeArray from '../utils/normalizeArray';
 
 const reverseMerge = R.flip(R.merge);
 const reverseConcat = R.flip(R.concat);
@@ -18,10 +19,16 @@ const concat = (runA, runB) =>
     glyphs: reverseConcat(R.prop('glyphs', runB)),
     positions: reverseConcat(R.prop('positions', runB)),
     attributes: reverseMerge(R.prop('attributes', runB)),
-    glyphIndices: reverseConcat(
-      R.map(
-        R.add(R.last(R.propOr([], 'glyphIndices', runA)) + 1), // index + last(runA) + 1
-        R.propOr([], 'glyphIndices', runB)
+    glyphIndices: R.compose(
+      normalizeArray,
+      reverseConcat(
+        R.map(
+          R.compose(
+            R.inc,
+            R.add(R.last(R.propOr([], 'glyphIndices', runA)) || 0)
+          ),
+          R.propOr([], 'glyphIndices', runB)
+        )
       )
     )
   })(runA);

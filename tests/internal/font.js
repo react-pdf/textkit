@@ -14,15 +14,51 @@ const glyphFromChar = R.compose(
   s => s.codePointAt(0)
 );
 
-const layoutGlyphs = R.cond([
-  [R.equals('fi'), R.always([shortLigature])],
-  [R.equals('ffi'), R.always([longLigature])],
-  [R.T, R.map(glyphFromChar)]
-]);
+const layoutGlyphs = R.compose(
+  R.flatten,
+  R.map(
+    R.cond([
+      [R.equals('fi'), R.always([shortLigature])],
+      [R.equals('ffi'), R.always([longLigature])],
+      [R.T, R.map(glyphFromChar)]
+    ])
+  ),
+  R.split(/(ffi|fi|.)/g)
+);
 
-const layout = R.applySpec({
-  glyphs: layoutGlyphs
-});
+const layoutPositions = R.map(
+  R.applySpec({
+    xAdvance: R.propOr(0, 'advanceWidth'),
+    yAdvance: R.always(0),
+    xOffset: R.always(0),
+    yOffset: R.always(0)
+  })
+);
+
+const layoutStringIndices = glyphs => {
+  let counter = 0;
+  const stringIndices = [];
+
+  for (let i = 0; i < glyphs.length; i++) {
+    const glyph = glyphs[i];
+    stringIndices.push(counter);
+    counter += glyph.codePoints.length;
+  }
+
+  return stringIndices;
+};
+
+const layout = string => {
+  const glyphs = layoutGlyphs(string);
+  const positions = layoutPositions(glyphs);
+  const stringIndices = layoutStringIndices(glyphs);
+
+  return {
+    glyphs,
+    positions,
+    stringIndices
+  };
+};
 
 export default {
   layout,

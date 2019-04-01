@@ -6,7 +6,7 @@ import slice from '../attributedString/slice';
  * @param  {Object}  attributed string
  * @return {Array} attributed string array
  */
-const splitParagraphs = attributedString => {
+const splitParagraphs = () => attributedString => {
   const res = [];
 
   let start = 0;

@@ -54,13 +54,14 @@ const applyRunStyles = R.evolve({
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */
-const applyDefaultStyles = R.applySpec({
-  string: R.propOr('', 'string'),
-  runs: R.compose(
-    R.map(applyRunStyles),
-    R.defaultTo([]),
-    R.prop('runs')
-  )
-});
+const applyDefaultStyles = () =>
+  R.applySpec({
+    string: R.propOr('', 'string'),
+    runs: R.compose(
+      R.map(applyRunStyles),
+      R.defaultTo([]),
+      R.prop('runs')
+    )
+  });
 
 export default applyDefaultStyles;

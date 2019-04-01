@@ -2,6 +2,8 @@ import * as R from 'ramda';
 
 import applyDefaultStyles from '../../src/core/applyDefaultStyles';
 
+const applyDefaultStylesInstance = applyDefaultStyles();
+
 const DEFAULTS = {
   align: 'left',
   attachment: null,
@@ -77,7 +79,7 @@ const OVERRIDES = {
 };
 
 const shouldDefault = (attribute, value) => () => {
-  const result = applyDefaultStyles({
+  const result = applyDefaultStylesInstance({
     string: 'Lorem',
     runs: [{ start: 0, end: 5, attributes: {} }]
   });
@@ -85,7 +87,7 @@ const shouldDefault = (attribute, value) => () => {
 };
 
 const shouldOverride = (attribute, value) => () => {
-  const result = applyDefaultStyles({
+  const result = applyDefaultStylesInstance({
     string: 'Lorem',
     runs: [{ start: 0, end: 5, attributes: { [attribute]: value } }]
   });
@@ -94,14 +96,14 @@ const shouldOverride = (attribute, value) => () => {
 
 describe('applyDefaultStyles', () => {
   test('should return empty attributed string if nothing passed', () => {
-    const result = applyDefaultStyles({});
+    const result = applyDefaultStylesInstance({});
 
     expect(result.string).toEqual('');
     expect(result.runs).toHaveLength(0);
   });
 
   test('should return passed string unchanged', () => {
-    const result = applyDefaultStyles({ string: 'Lorem' });
+    const result = applyDefaultStylesInstance({ string: 'Lorem' });
 
     expect(result.string).toEqual('Lorem');
     expect(result.runs).toHaveLength(0);
@@ -118,7 +120,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should underline color get color value if not present', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { color: 'red' } }]
     });
@@ -127,7 +129,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should margin right get margin value if not present', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { margin: 5 } }]
     });
@@ -136,7 +138,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should margin left get margin value if not present', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { margin: 5 } }]
     });
@@ -145,7 +147,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should padding top get padding value if not present', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { padding: 5 } }]
     });
@@ -154,7 +156,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should truncationMode be right if truncate present', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { truncate: true } }]
     });
@@ -163,7 +165,7 @@ describe('applyDefaultStyles', () => {
   });
 
   test('should opacity be zero', () => {
-    const result = applyDefaultStyles({
+    const result = applyDefaultStylesInstance({
       string: 'Lorem',
       runs: [{ start: 0, end: 5, attributes: { opacity: 0 } }]
     });

@@ -1,15 +1,27 @@
+import * as R from 'ramda';
+
 import fromFragments from '../../src/attributedString/fromFragments';
 
 /**
- * Wrap words of attribute string
- * TODO: maybe add syllables to attributed string schema?
+ * Default word hyphenation engine used when no one provided.
+ * Does not perform word hyphenation at all
  *
- * @param  {Object}  attributed string
- * @return {Object} attributed string and syllables
+ * @param  {String} word
+ * @return {Array} same word
  */
-const wrapWords = engines => attributedString => {
+const defaultHyphenationEngine = word => [word];
+
+/**
+ * Wrap words of attribute string
+ *
+ * @param  {Object} layout engines
+ * @param  {Object}  attributed string
+ * @return {Object} attributed string including syllables
+ */
+const wrapStringWords = engines => attributedString => {
   const syllables = [];
   const fragments = [];
+  const hyphenateWord = engines.wordHyphenation || defaultHyphenationEngine;
 
   for (const run of attributedString.runs) {
     let string = '';
@@ -19,7 +31,7 @@ const wrapWords = engines => attributedString => {
       .filter(Boolean);
 
     for (const word of words) {
-      const parts = engines.wordHyphenation(word);
+      const parts = hyphenateWord(word);
       syllables.push(...parts);
       string += parts.join('');
     }
@@ -27,10 +39,16 @@ const wrapWords = engines => attributedString => {
     fragments.push({ string, attributes: run.attributes });
   }
 
-  return {
-    attributedString: fromFragments(fragments),
-    syllables
-  };
+  return { ...fromFragments(fragments), syllables };
 };
+
+/**
+ * Wrap words of many attribute string
+ *
+ * @param  {Object} layout engines
+ * @param  {Array}  attributed strings (paragraphs)
+ * @return {Array} attributed strings and syllables
+ */
+const wrapWords = (engines = {}) => R.map(wrapStringWords(engines));
 
 export default wrapWords;

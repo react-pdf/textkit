@@ -2,12 +2,11 @@ import * as R from 'ramda';
 
 import wrapWords from './wrapWords';
 // import typesetter from './typesetter';
-// import injectEngines from './injectEngines';
-// import generateGlyphs from './generateGlyphs';
-// import resolveYOffset from './resolveYOffset';
+import generateGlyphs from './generateGlyphs';
+import resolveYOffset from './resolveYOffset';
 import preprocessRuns from './preprocessRuns';
 import splitParagraphs from './splitParagraphs';
-// import resolveAttachments from './resolveAttachments';
+import resolveAttachments from './resolveAttachments';
 import applyDefaultStyles from './applyDefaultStyles';
 
 /**
@@ -21,13 +20,13 @@ import applyDefaultStyles from './applyDefaultStyles';
 const layoutEngine = (engines, attributedString, containers) =>
   R.compose(
     // typesetter(engines)(containers),
-    // map(resolveYOffset(engines)),
-    // map(resolveAttachments(engines)),
-    // map(generateGlyphs(engines)),
-    R.map(wrapWords(engines)),
-    splitParagraphs,
+    resolveYOffset(engines),
+    resolveAttachments(engines),
+    generateGlyphs(engines),
+    wrapWords(engines),
+    splitParagraphs(engines),
     preprocessRuns(engines),
-    applyDefaultStyles
+    applyDefaultStyles(engines)
   )(attributedString);
 
 export default R.curryN(3, layoutEngine);

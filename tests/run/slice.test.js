@@ -142,6 +142,27 @@ describe('run slice operator', () => {
       expect(R.pluck('id', sliced.glyphs)).toEqual([111, 64257, 109]);
     });
 
+    test('should correctly slice glyphs containing ligature at start', () => {
+      const run = {
+        start: 0,
+        end: 5,
+        glyphs: [
+          { id: 64257, codePoints: [102, 105] }, // fi
+          { id: 76, codePoints: [76] }, // l
+          { id: 111, codePoints: [111] }, // o
+          { id: 109, codePoints: [109] } // m
+        ],
+        glyphIndices: [0, 0, 1, 2, 3],
+        attributes: { font }
+      };
+      const sliced = slice(1, 5, run);
+
+      expect(sliced).toHaveProperty('start', 1);
+      expect(sliced).toHaveProperty('end', 5);
+      expect(sliced.glyphs).toHaveLength(4);
+      expect(R.pluck('id', sliced.glyphs)).toEqual([105, 76, 111, 109]);
+    });
+
     test('should correctly slice glyphs starting in ligature', () => {
       const run = {
         start: 0,
