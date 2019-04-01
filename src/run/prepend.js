@@ -2,19 +2,8 @@ import * as R from 'ramda';
 
 import copy from './copy';
 import isNumber from '../utils/isNumber';
+import prependIndices from '../indices/prepend';
 import glyphFromCodePoint from '../glyph/fromCodePoint';
-
-/**
- * Prepend glyph indices with given length
- *
- * Ex. prependIndices(3, [0, 1, 2, 2]) => [0, 0, 0, 1, 2, 3, 4]
- *
- * @param  {number}  length
- * @param  {Array}  glyph indices
- * @return {Array}  extended glyph indices
- */
-const prependIndices = length =>
-  R.converge(R.concat, [R.converge(R.repeat, [R.always(0), R.always(length)]), R.map(R.inc)]);
 
 /**
  * Prepend glyph to run
