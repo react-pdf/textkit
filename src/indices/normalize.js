@@ -6,6 +6,6 @@ import * as R from 'ramda';
  * @param  {Array[number]}  list
  * @return {boolean} normalized array
  */
-const normalizeArray = array => R.map(R.subtract(R.__, R.head(array)))(array);
+const normalize = array => R.map(R.subtract(R.__, R.head(array)))(array);
 
-export default normalizeArray;
+export default normalize;

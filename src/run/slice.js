@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import offset from './offset';
 import sliceGlyph from '../glyph/slice';
 import glyphIndexAt from './glyphIndexAt';
-import normalizeArray from '../utils/normalizeArray';
+import normalizeIndices from '../indices/normalize';
 
 /**
  * Slice run between glyph indices range
@@ -55,7 +55,7 @@ const slice = (start, end, run) => {
         positions.slice(glyphStartIndex + sliceOffset, glyphEndIndex),
         endGlyphs.map(g => ({ xAdvance: g.advanceWidth }))
       ]),
-    glyphIndices: R.o(normalizeArray, R.slice(start, end)),
+    glyphIndices: R.o(normalizeIndices, R.slice(start, end)),
     attributes: R.identity
   })(run);
 };

@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
 import length from './length';
-import normalizeArray from '../utils/normalizeArray';
+import normalizeIndices from '../indices/normalize';
 
 const reverseMerge = R.flip(R.merge);
 const reverseConcat = R.flip(R.concat);
@@ -20,7 +20,7 @@ const concat = (runA, runB) =>
     positions: reverseConcat(R.prop('positions', runB)),
     attributes: reverseMerge(R.prop('attributes', runB)),
     glyphIndices: R.compose(
-      normalizeArray,
+      normalizeIndices,
       reverseConcat(
         R.map(
           R.compose(

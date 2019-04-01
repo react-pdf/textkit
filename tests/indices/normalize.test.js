@@ -1,6 +1,6 @@
-import normalizeArray from '../../src/utils/normalizeArray';
+import normalizeArray from '../../src/indices/normalize';
 
-describe('utils normalizeArray operator', () => {
+describe('indices normalizeArray operator', () => {
   test('should return empty array for empty array', () => {
     expect(normalizeArray([])).toEqual([]);
   });

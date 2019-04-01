@@ -3,13 +3,13 @@ import * as R from 'ramda';
 /**
  * Generate glyphs indices from string indices
  *
- * ex. resolveGlyphIndices([[0, 1, 2, 4]]) => [0, 1, 2, 2, 3]
+ * ex. resolve([[0, 1, 2, 4]]) => [0, 1, 2, 2, 3]
  *
  * @param  {String}  string
  * @param  {Array}  string indices
  * @return {Array} glyph indices
  */
-const resolveGlyphIndices = (string, stringIndices) => {
+const resolve = (string, stringIndices) => {
   let counter = 0;
   const glyphIndices = [];
 
@@ -33,4 +33,4 @@ const resolveGlyphIndices = (string, stringIndices) => {
   return glyphIndices;
 };
 
-export default resolveGlyphIndices;
+export default resolve;

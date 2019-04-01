@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import resolveGlyphIndices from '../utils/resolveGlyphIndices';
+import resolveGlyphIndices from '../indices/resolve';
 
 /**
  * Generate glyphs for single attributed string
