@@ -93,7 +93,7 @@ describe('run slice operator', () => {
         glyphs: [
           { id: 76, codePoints: [76] }, // l
           { id: 111, codePoints: [111] }, // o
-          { id: 64257, codePoints: [64257] }, // fi
+          { id: 64257, codePoints: [102, 105] }, // fi
           { id: 109, codePoints: [109] } // m
         ]
       };

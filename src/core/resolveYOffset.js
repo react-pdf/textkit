@@ -1,15 +1,30 @@
 import * as R from 'ramda';
 
+import copy from '../attributedString/copy';
+
+/**
+ * Resolves yOffset for attributed string
+ *
+ * @param  {Object}  attributed string
+ * @return {Object} attributed string
+ */
 const resolveStringYOffset = string => {
-  for (const run of string.runs) {
-    const { font, yOffset } = run.attributes;
-    if (!yOffset) continue;
-    for (let i = 0; i < run.length; i++) {
-      run.positions[i].yOffset += yOffset * font.unitsPerEm;
+  const newString = copy(string);
+
+  for (const run of newString.runs) {
+    const font = R.path(['attributes', 'font'], run);
+    const yOffset = R.path(['attributes', 'yOffset'], run);
+    const positions = R.prop('positions', run);
+
+    if (!yOffset || !font || !positions) continue;
+
+    for (const position of run.positions) {
+      position.yOffset = position.yOffset || 0;
+      position.yOffset += yOffset * font.unitsPerEm;
     }
   }
 
-  return string;
+  return newString;
 };
 
 /**

@@ -1,26 +1,35 @@
 import * as R from 'ramda';
 
-const ATTACHMENT_CODE = 0xfffc;
+import copy from '../attributedString/copy';
 
+const ATTACHMENT_CODE = 0xfffc; // 65532
+
+/**
+ * Resolve attachments of attributed string
+ *
+ * @param  {Object}  attributed string
+ * @return {Object} attributed string
+ */
 const resolveStringAttachments = string => {
-  for (const run of string.runs) {
-    const { font, attachment } = run.attributes;
+  const newString = copy(string);
 
-    if (!attachment) continue;
+  for (const run of newString.runs) {
+    const glyphs = R.propOr([], 'glyphs', run);
+    const attachment = R.path(['attributes', 'attachment'], run);
 
-    const objectReplacement = font.glyphForCodePoint(ATTACHMENT_CODE);
+    if (!attachment || !glyphs) continue;
 
-    for (let i = 0; i < run.length; i++) {
-      const glyph = run.glyphs[i];
-      const position = run.positions[i];
+    for (let i = 0; i < glyphs.length; i++) {
+      const glyph = glyphs[i];
+      const position = R.path(['positions', i], run);
 
-      if (glyph.id === objectReplacement.id) {
+      if (position && R.includes(ATTACHMENT_CODE, glyph.codePoints)) {
         position.xAdvance = attachment.width;
       }
     }
   }
 
-  return string;
+  return newString;
 };
 
 /**
