@@ -1,3 +1,4 @@
+import length from '../attributedString/length';
 import slice from '../attributedString/slice';
 
 /**
@@ -19,7 +20,7 @@ const splitParagraphs = () => attributedString => {
   }
 
   if (start < attributedString.string.length) {
-    res.push(slice(start, attributedString.length, attributedString));
+    res.push(slice(start, length(attributedString), attributedString));
   }
 
   return res;

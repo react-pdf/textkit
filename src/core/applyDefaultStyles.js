@@ -51,6 +51,7 @@ const applyRunStyles = R.evolve({
 /**
  * Apply default attributes for an attributed string
  *
+ * @param  {Object}  engines
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */

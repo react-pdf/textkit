@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "hyphen": "^1.1.0",
+    "hyphen": "^1.1.1",
     "pdfkit": "^0.8.0",
     "ramda": "^0.26.1",
     "unicode-properties": "^1.1.0"

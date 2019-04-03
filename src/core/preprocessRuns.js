@@ -9,6 +9,7 @@ const omitFont = R.evolve({ runs: R.map(omit('font')) });
 /**
  * Performs font substitution and script itemization on attributed string
  *
+ * @param  {Object}  engines
  * @param  {Object}  attributed string
  * @return {Object} processed attributed string
  */
