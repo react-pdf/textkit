@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 
 import wrapWords from './wrapWords';
-// import typesetter from './typesetter';
+import typesetter from './typesetter';
 import generateGlyphs from './generateGlyphs';
 import resolveYOffset from './resolveYOffset';
 import preprocessRuns from './preprocessRuns';
@@ -19,7 +19,7 @@ import applyDefaultStyles from './applyDefaultStyles';
 
 const layoutEngine = (engines, attributedString, containers) =>
   R.compose(
-    // typesetter(engines)(containers),
+    typesetter(engines)(containers),
     resolveYOffset(engines),
     resolveAttachments(engines),
     generateGlyphs(engines),

@@ -63,5 +63,7 @@ const layout = string => {
 export default {
   layout,
   glyphForCodePoint,
-  unitsPerEm: 2
+  unitsPerEm: 2,
+  ascent: 2,
+  descent: -2
 };

@@ -43,10 +43,14 @@ const string = {
 
 const hrstart = process.hrtime();
 
-const layout = layoutEngine(string, null);
+const container = {
+  path: { x: 0, y: 0, width: 150, height: 700 }
+};
+
+const layout = layoutEngine(string, [container]);
 
 const hrend = process.hrtime(hrstart);
 
-console.log(layout[0]);
+console.log(layout);
 
 console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
