@@ -136,7 +136,7 @@ describe('run remove glyph operator', () => {
       ],
       positions: [{ xAdvance: 10 }, { xAdvance: 7 }, { xAdvance: 8 }, { xAdvance: 9 }],
       glyphIndices: [0, 0, 1, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = remove(0, run);

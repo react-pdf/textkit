@@ -19,13 +19,14 @@
     "access": "public"
   },
   "dependencies": {
+    "@react-pdf/pdfkit": "^1.2.0",
     "babel-runtime": "^6.26.0",
     "hyphen": "^1.1.1",
-    "pdfkit": "^0.8.0",
     "ramda": "^0.26.1",
     "unicode-properties": "^1.1.0"
   },
   "devDependencies": {
+    "@react-pdf/fontkit": "^1.13.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",

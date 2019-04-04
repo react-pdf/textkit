@@ -157,7 +157,7 @@ describe('attributeString slice operator', () => {
         ],
         positions: [{ xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 10 }, { xAdvance: 9 }],
         glyphIndices: [0, 1, 2, 2, 3],
-        attributes: { font }
+        attributes: { font, fontSize: 2 }
       }
     ];
 
@@ -183,7 +183,7 @@ describe('attributeString slice operator', () => {
         ],
         positions: [{ xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 10 }, { xAdvance: 9 }],
         glyphIndices: [0, 1, 2, 2, 3],
-        attributes: { font }
+        attributes: { font, fontSize: 2 }
       }
     ];
 

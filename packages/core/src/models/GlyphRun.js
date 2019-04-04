@@ -76,6 +76,7 @@ class GlyphRun extends Run {
     return this.attributes.lineHeight || this.ascent - this.descent + this.lineGap;
   }
 
+  // DONE
   slice(start, end) {
     const glyphs = this.glyphs.slice(start, end);
     const positions = this.positions.slice(start, end);

@@ -3,4 +3,6 @@ yarn.lock
 .DS_Store
 dist
 *.pdf
+*.ttf
 lerna-debug.log
+test.js

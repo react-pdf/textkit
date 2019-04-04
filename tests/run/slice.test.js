@@ -494,7 +494,7 @@ describe('run slice operator', () => {
           { xAdvance: 4 } // m
         ],
         glyphIndices: [0, 1, 2, 2, 3],
-        attributes: { font }
+        attributes: { font, fontSize: 2 }
       };
       const sliced = slice(3, 5, run);
 
@@ -520,7 +520,7 @@ describe('run slice operator', () => {
           { xAdvance: 4 } // m
         ],
         glyphIndices: [0, 1, 2, 2, 3],
-        attributes: { font }
+        attributes: { font, fontSize: 2 }
       };
       const sliced = slice(1, 3, run);
 

@@ -10,8 +10,12 @@ const unitsPerEm = ['font', 'unitsPerEm'];
  */
 const scale = R.compose(
   R.ifElse(
-    R.hasPath(unitsPerEm),
-    R.converge(R.divide, [R.propOr(0, 'fontSize'), R.path(unitsPerEm)]),
+    R.compose(
+      R.not,
+      R.isNil,
+      R.path(unitsPerEm)
+    ),
+    R.converge(R.divide, [R.propOr(12, 'fontSize'), R.path(unitsPerEm)]),
     R.always(0)
   ),
   R.propOr({}, 'attributes')

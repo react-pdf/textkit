@@ -6,6 +6,7 @@ import generateGlyphs from './generateGlyphs';
 import resolveYOffset from './resolveYOffset';
 import preprocessRuns from './preprocessRuns';
 import splitParagraphs from './splitParagraphs';
+import finalizeFragments from './finalizeFragments';
 import resolveAttachments from './resolveAttachments';
 import applyDefaultStyles from './applyDefaultStyles';
 
@@ -19,6 +20,7 @@ import applyDefaultStyles from './applyDefaultStyles';
 
 const layoutEngine = (engines, attributedString, containers) =>
   R.compose(
+    finalizeFragments(engines),
     typesetter(engines)(containers),
     resolveYOffset(engines),
     resolveAttachments(engines),

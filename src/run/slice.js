@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import scale from './scale';
 import offset from './offset';
 import sliceGlyph from '../glyph/slice';
 import glyphIndexAt from './glyphIndexAt';
@@ -14,6 +15,7 @@ import normalizeIndices from '../indices/normalize';
  * @return {Object} sliced run
  */
 const slice = (start, end, run) => {
+  const runScale = scale(run);
   const font = R.path(['attributes', 'font'])(run);
 
   // Get glyph start and end indices
@@ -51,9 +53,9 @@ const slice = (start, end, run) => {
       ]),
     positions: positions =>
       R.flatten([
-        startGlyphs.map(g => ({ xAdvance: g.advanceWidth })),
+        startGlyphs.map(g => ({ xAdvance: g.advanceWidth * runScale })),
         positions.slice(glyphStartIndex + sliceOffset, glyphEndIndex),
-        endGlyphs.map(g => ({ xAdvance: g.advanceWidth }))
+        endGlyphs.map(g => ({ xAdvance: g.advanceWidth * runScale }))
       ]),
     glyphIndices: R.o(normalizeIndices, R.slice(start, end)),
     attributes: R.identity

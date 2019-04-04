@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 
-import copyRun from '../run/copy';
 import sliceRun from '../run/slice';
 import filterRuns from '../run/filter';
 import subtractRun from '../run/subtract';
@@ -17,7 +16,7 @@ import mapIndexed from '../utils/mapIndexed';
 const sliceRuns = (start, end) => runs => {
   const firstRun = a => sliceRun(start - a.start, end - a.start, a);
   const lastRun = a => sliceRun(0, end - a.start, a);
-  const intermediateRun = a => copyRun(a);
+  const intermediateRun = R.identity;
 
   return mapIndexed([
     R.o(subtractRun(start), firstRun), // Slice first run

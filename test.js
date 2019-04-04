@@ -1,5 +1,10 @@
+import fs from 'fs';
+import PDFDocument from '@react-pdf/pdfkit';
+import fontkit from '@react-pdf/fontkit';
 import layoutEngine from './src';
-import font from './tests/internal/font';
+import PDFRenderer from './src/PDFRenderer';
+
+const font = fontkit.openSync(`${__dirname}/font.ttf`);
 
 const string = {
   string: 'Lorem ipsum dolor fit amet',
@@ -41,6 +46,10 @@ const string = {
   ]
 };
 
+// Create a document
+const doc = new PDFDocument();
+doc.pipe(fs.createWriteStream(`${__dirname}/output.pdf`));
+
 const hrstart = process.hrtime();
 
 const container = {
@@ -49,8 +58,10 @@ const container = {
 
 const layout = layoutEngine(string, [container]);
 
+// console.log(layout);
 const hrend = process.hrtime(hrstart);
-
-console.log(layout);
-
 console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
+
+PDFRenderer.render(doc, layout);
+
+doc.end();

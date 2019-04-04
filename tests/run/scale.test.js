@@ -7,12 +7,6 @@ describe('run scale operator', () => {
     expect(scale(run)).toBe(0);
   });
 
-  test('should return 0 if fontSize not present', () => {
-    const run = { attributes: { font: { unitsPerEm: 2 } } };
-
-    expect(scale(run)).toBe(0);
-  });
-
   test('should return 0 if unknown font unitsPerEm', () => {
     const run = { attributes: { fontSize: 12, font: { other: 'blah' } } };
 

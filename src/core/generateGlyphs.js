@@ -1,6 +1,64 @@
 import * as R from 'ramda';
 
+import scale from '../run/scale';
 import resolveGlyphIndices from '../indices/resolve';
+
+const mapIndexed = R.addIndex(R.map);
+
+/**
+ * Scale run positions
+ *
+ * @param  {Object}  run
+ * @param  {Array}  positions
+ * @return {Array} scaled positions
+ */
+const scalePositions = (run, positions) => {
+  const multScale = R.multiply(scale(run));
+  const characterSpacing = R.pathOr(0, ['attributes', 'characterSpacing'], run);
+
+  return mapIndexed((pos, i, list) => {
+    const isLast = i === list.length - 1;
+
+    return R.evolve({
+      xAdvance: R.compose(
+        R.when(
+          R.always(!isLast),
+          R.add(characterSpacing) // Add char spacing
+        ),
+        multScale
+      ),
+      yAdvance: multScale,
+      xOffset: multScale,
+      yOffset: multScale
+    })(pos);
+  }, positions);
+};
+
+/**
+ * Create glyph run
+ *
+ * @param  {String}  string
+ * @param  {Object}  run
+ * @return {Object}  glyph run
+ */
+const layoutRun = string => run => {
+  const { start, end, attributes = {} } = run;
+  const { font, features, script } = attributes;
+
+  if (!font) return { ...run, glyphs: [], glyphIndices: [], positions: [] };
+
+  const runString = string.slice(start, end);
+  const glyphRun = font.layout(runString, features, script);
+  const positions = scalePositions(run, glyphRun.positions);
+  const glyphIndices = resolveGlyphIndices(runString, glyphRun.stringIndices);
+
+  return {
+    ...run,
+    positions,
+    glyphIndices,
+    glyphs: glyphRun.glyphs
+  };
+};
 
 /**
  * Generate glyphs for single attributed string
@@ -10,23 +68,7 @@ import resolveGlyphIndices from '../indices/resolve';
  */
 const stringToGlyphs = attributedString =>
   R.evolve({
-    runs: R.map(run => {
-      const { start, end, attributes = {} } = run;
-      const { font, features, script } = attributes;
-
-      if (!font) return { ...run, glyphs: [], glyphIndices: [], positions: [] };
-
-      const string = attributedString.string.slice(start, end);
-      const glyphRun = font.layout(string, features, script);
-      const glyphIndices = resolveGlyphIndices(string, glyphRun.stringIndices);
-
-      return {
-        ...run,
-        glyphIndices,
-        glyphs: glyphRun.glyphs,
-        positions: glyphRun.positions
-      };
-    })
+    runs: R.map(layoutRun(attributedString.string))
   })(attributedString);
 
 /**

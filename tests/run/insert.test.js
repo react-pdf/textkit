@@ -280,7 +280,7 @@ describe('run insert glyph operator', () => {
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 10 }, { xAdvance: 8 }],
       glyphIndices: [0, 1, 2, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
