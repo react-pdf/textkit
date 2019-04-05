@@ -9,37 +9,11 @@ const font = fontkit.openSync(`${__dirname}/font.ttf`);
 
 const string = fromFragments([
   {
-    string: 'Lffim ',
-    attributes: {
-      font,
-      fontSize: 10
-    }
-  },
-  {
-    string: 'ipsum ',
-    attributes: {
-      font,
-      fontSize: 12,
-      color: 'red'
-    }
-  },
-  {
-    string: 'dolor ',
+    string:
+      'Nulla amet veniam tempor aute laborum.\nConsectetur incididunt laboris cupidatat officia sit mollit sit in cillum nostrud.',
     attributes: {
       font,
       fontSize: 16
-    }
-  },
-  {
-    string: 'diego \ufffc muracciole',
-    attributes: {
-      font,
-      fontSize: 16,
-      attachment: {
-        width: 20,
-        height: 20,
-        image: `${__dirname}/emoji.png`
-      }
     }
   }
 ]);

@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 
+import font from '../internal/font';
 import empty from '../../src/attributedString/empty';
 import append from '../../src/attributedString/append';
 
@@ -23,7 +24,8 @@ describe('attributeString append operator', () => {
           { xAdvance: 8 },
           { xAdvance: 9 }
         ],
-        glyphIndices: [0, 1, 2, 3, 4]
+        glyphIndices: [0, 1, 2, 3, 4],
+        attributes: { font, fontSize: 2 }
       }
     ];
 
@@ -45,7 +47,6 @@ describe('attributeString append operator', () => {
     expect(result.runs[0]).toHaveProperty('end', 1);
     expect(result.runs[0].glyphIndices).toEqual([0]);
     expect(R.pluck('id', result.runs[0].glyphs)).toEqual([76]);
-    expect(R.pluck('xAdvance', result.runs[0].positions)).toEqual([10]);
   });
 
   test('should append glyph on single run string', () => {
@@ -67,7 +68,8 @@ describe('attributeString append operator', () => {
           { xAdvance: 8 },
           { xAdvance: 9 }
         ],
-        glyphIndices: [0, 1, 2, 3, 4]
+        glyphIndices: [0, 1, 2, 3, 4],
+        attributes: { font, fontSize: 2 }
       }
     ];
 
@@ -95,7 +97,8 @@ describe('attributeString append operator', () => {
           { id: 114, codePoints: [114] } // r
         ],
         positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }],
-        glyphIndices: [0, 1, 2]
+        glyphIndices: [0, 1, 2],
+        attributes: { font, fontSize: 2 }
       },
       {
         start: 3,
@@ -105,7 +108,8 @@ describe('attributeString append operator', () => {
           { id: 109, codePoints: [109] } // m
         ],
         positions: [{ xAdvance: 8 }, { xAdvance: 9 }],
-        glyphIndices: [0, 1]
+        glyphIndices: [0, 1],
+        attributes: { font, fontSize: 2 }
       }
     ];
 
@@ -150,7 +154,8 @@ describe('attributeString append operator', () => {
           { xAdvance: 8 },
           { xAdvance: 9 }
         ],
-        glyphIndices: [0, 1, 2, 3, 4]
+        glyphIndices: [0, 1, 2, 3, 4],
+        attributes: { font, fontSize: 2 }
       }
     ];
 
@@ -178,7 +183,8 @@ describe('attributeString append operator', () => {
           { id: 114, codePoints: [114] } // r
         ],
         positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }],
-        glyphIndices: [0, 1, 2]
+        glyphIndices: [0, 1, 2],
+        attributes: { font, fontSize: 2 }
       },
       {
         start: 3,
@@ -188,7 +194,8 @@ describe('attributeString append operator', () => {
           { id: 109, codePoints: [109] } // m
         ],
         positions: [{ xAdvance: 8 }, { xAdvance: 9 }],
-        glyphIndices: [0, 1]
+        glyphIndices: [0, 1],
+        attributes: { font, fontSize: 2 }
       }
     ];
 

@@ -19,7 +19,7 @@ const purgeAttachments = R.when(
  * Layout paragraphs inside rectangle
  *
  * @param  {Object} rect
- * @param  {Object} attributed strings
+ * @param  {Array} attributed strings
  * @return {Object} layout blocks
  */
 const layoutLines = (rect, lines) => {

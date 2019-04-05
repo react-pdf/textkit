@@ -1,5 +1,9 @@
 import * as R from 'ramda';
 
+import copy from '../attributedString/copy';
+import length from '../attributedString/length';
+import dropLast from '../attributedString/dropLast';
+
 const NEW_LINE = 10;
 const ALIGNMENT_FACTORS = {
   left: 0,
@@ -9,17 +13,19 @@ const ALIGNMENT_FACTORS = {
 };
 
 const finalizeFragment = engines => (line, i, lines) => {
+  let newLine = copy(line);
+
   const isLastFragment = i === lines.length - 1;
-  const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
+  const style = R.pathOr({}, ['runs', 0, 'attributes'], newLine);
   const align = isLastFragment ? style.alignLastLine : style.align;
 
-  let start = 0;
-  let end = line.length;
+  const start = 0;
+  const end = length(newLine);
 
   // Remove new line char at the end of line
-  // if (line.codePointAtGlyphIndex(line.length - 1) === NEW_LINE) {
-  //   line.deleteGlyph(line.length - 1);
-  // }
+  if (R.last(newLine.string) === '\n') {
+    newLine = dropLast(line);
+  }
 
   // Ignore whitespace at the start and end of a line for alignment
   // while (line.isWhiteSpace(start)) {
@@ -44,9 +50,10 @@ const finalizeFragment = engines => (line, i, lines) => {
   // }
 
   // engines.decorationEngine(line);
-  return line;
+  return newLine;
 };
 
-const finalizeFragments = (engines, lines) => R.addIndex(R.map)(finalizeFragment(engines), lines);
+const finalizeFragments = (engines, blocks) =>
+  R.map(R.addIndex(R.map)(finalizeFragment(engines)), blocks);
 
 export default R.curryN(2, finalizeFragments);

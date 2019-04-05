@@ -22,7 +22,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(2, null, run);
@@ -52,7 +53,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
@@ -83,7 +85,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
@@ -114,7 +117,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
@@ -145,7 +149,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 64257, codePoints: [102, 105], advanceWidth: 10 }; // fi
@@ -176,7 +181,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 64257, codePoints: [102, 105], advanceWidth: 10 }; // fi
@@ -207,7 +213,8 @@ describe('run insert glyph operator', () => {
         { xAdvance: 8 },
         { xAdvance: 9 }
       ],
-      glyphIndices: [0, 1, 2, 3, 4]
+      glyphIndices: [0, 1, 2, 3, 4],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 64257, codePoints: [102, 105], advanceWidth: 10 }; // fi
@@ -231,7 +238,8 @@ describe('run insert glyph operator', () => {
         { id: 109, codePoints: [109] } // m
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
-      glyphIndices: [0, 1, 2, 2, 3]
+      glyphIndices: [0, 1, 2, 2, 3],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
@@ -255,7 +263,8 @@ describe('run insert glyph operator', () => {
         { id: 109, codePoints: [109] } // m
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
-      glyphIndices: [0, 1, 2, 2, 3]
+      glyphIndices: [0, 1, 2, 2, 3],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 105, codePoints: [105], advanceWidth: 10 }; // i
@@ -304,7 +313,8 @@ describe('run insert glyph operator', () => {
         { id: 109, codePoints: [109] } // m
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
-      glyphIndices: [0, 1, 2, 2, 3]
+      glyphIndices: [0, 1, 2, 2, 3],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 64259, codePoints: [102, 102, 105], advanceWidth: 10 }; // ffi
@@ -326,7 +336,8 @@ describe('run insert glyph operator', () => {
         { id: 109, codePoints: [109] } // m
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
-      glyphIndices: [0, 1, 2, 2, 3]
+      glyphIndices: [0, 1, 2, 2, 3],
+      attributes: { font, fontSize: 2 }
     };
 
     const glyph = { id: 64259, codePoints: [102, 102, 105], advanceWidth: 10 }; // ffi
@@ -358,7 +369,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(2, null, run);
@@ -387,7 +398,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(0, 105, run);
@@ -416,7 +427,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(5, 105, run);
@@ -445,7 +456,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(2, 105, run);
@@ -474,7 +485,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(0, 64257, run); // filorem
@@ -503,7 +514,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(2, 64257, run); // lofirem
@@ -532,7 +543,7 @@ describe('run insert code point operator', () => {
         { xAdvance: 9 }
       ],
       glyphIndices: [0, 1, 2, 3, 4],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(5, 64257, run); // loremfi
@@ -554,7 +565,7 @@ describe('run insert code point operator', () => {
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
       glyphIndices: [0, 1, 2, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(1, 105, run);
@@ -576,7 +587,7 @@ describe('run insert code point operator', () => {
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
       glyphIndices: [0, 1, 2, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(4, 105, run);
@@ -598,7 +609,7 @@ describe('run insert code point operator', () => {
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
       glyphIndices: [0, 1, 2, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(1, 64259, run); // lffiofim
@@ -620,7 +631,7 @@ describe('run insert code point operator', () => {
       ],
       positions: [{ xAdvance: 5 }, { xAdvance: 6 }, { xAdvance: 7 }, { xAdvance: 8 }],
       glyphIndices: [0, 1, 2, 2, 3],
-      attributes: { font }
+      attributes: { font, fontSize: 2 }
     };
 
     const result = insert(4, 64259, run); // lofiffim

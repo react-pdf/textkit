@@ -6,7 +6,7 @@ import generateGlyphs from './generateGlyphs';
 import resolveYOffset from './resolveYOffset';
 import preprocessRuns from './preprocessRuns';
 import splitParagraphs from './splitParagraphs';
-// import finalizeFragments from './finalizeFragments';
+import finalizeFragments from './finalizeFragments';
 import resolveAttachments from './resolveAttachments';
 import applyDefaultStyles from './applyDefaultStyles';
 
@@ -24,12 +24,8 @@ import applyDefaultStyles from './applyDefaultStyles';
  */
 const layoutEngine = (engines, attributedString, container) =>
   R.compose(
-    // finalizeFragments(engines),
+    finalizeFragments(engines),
     typesetter(engines)(container),
-    // R.tap(a => {
-    //   console.log(a[0].runs);
-
-    // }),
     resolveYOffset(engines),
     resolveAttachments(engines),
     generateGlyphs(engines),
