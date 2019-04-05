@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 import copy from './copy';
+import scale from './scale';
 import isNumber from '../utils/isNumber';
 import prependIndices from '../indices/prepend';
 import glyphFromCodePoint from '../glyph/fromCodePoint';
@@ -13,13 +14,14 @@ import glyphFromCodePoint from '../glyph/fromCodePoint';
  * @return {Object} run with glyph
  */
 const prependGlyph = (glyph, run) => {
+  const runScale = scale(run);
   const glyphLength = R.length(glyph.codePoints);
 
   return R.evolve({
     end: R.add(glyphLength),
     glyphIndices: prependIndices(glyphLength),
     glyphs: R.prepend(glyph),
-    positions: R.prepend({ xAdvance: glyph.advanceWidth })
+    positions: R.prepend({ xAdvance: glyph.advanceWidth * runScale })
   })(run);
 };
 

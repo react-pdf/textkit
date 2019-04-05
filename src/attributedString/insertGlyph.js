@@ -45,7 +45,7 @@ const insertGlyph = (index, glyph, string) => {
       R.insert(index, stringFromCodePoints(codePoints))
     ),
     runs: mapCond([
-      [idxEquals(runIndex), run => insert(index - run.start, glyph)(run)],
+      [idxEquals(runIndex), run => insert(index - run.start, glyph, run)],
       [
         idxGt(runIndex),
         R.evolve({

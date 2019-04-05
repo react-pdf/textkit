@@ -1,22 +1,61 @@
+import runHeight from '../run/height';
+import runDescent from '../run/descent';
+import advanceWidth from '../run/advanceWidth';
 import ascent from '../attributedString/ascent';
 
-const renderRun = (ctx, run) => {
+const renderAttachments = (ctx, run) => {
+  ctx.save();
+
+  const { font } = run.attributes;
+  const space = font.glyphForCodePoint(0x20);
+  const objectReplacement = font.glyphForCodePoint(0xfffc);
+
+  for (let i = 0; i < run.glyphs.length; i++) {
+    const position = run.positions[i];
+    const glyph = run.glyphs[i];
+
+    ctx.translate(position.xAdvance, position.yOffset | 0);
+
+    if (glyph.id === objectReplacement.id && run.attributes.attachment) {
+      renderAttachment(ctx, run.attributes.attachment);
+      run.glyphs[i] = space;
+    }
+  }
+
+  ctx.restore();
+};
+
+const renderAttachment = (ctx, attachment) => {
+  const { xOffset = 0, yOffset = 0, width, height, image } = attachment;
+
+  ctx.translate(-width + xOffset, -height + yOffset);
+
+  ctx.image(image, 0, 0, {
+    fit: [width, height],
+    align: 'center',
+    valign: 'bottom'
+  });
+};
+
+const renderRun = (ctx, run, options) => {
   const { font, fontSize, color, link, opacity } = run.attributes;
 
-  // console.log(font);
+  const height = runHeight(run);
+  const descent = runDescent(run);
+  const runAdvanceWidth = advanceWidth(run);
 
-  // if (this.outlineRuns) {
-  //   ctx.rect(0, 0, run.advanceWidth, run.height).stroke();
-  // }
+  if (options.outlineRuns) {
+    ctx.rect(0, -height, runAdvanceWidth, height).stroke();
+  }
 
   ctx.fillColor(color);
   ctx.fillOpacity(opacity);
 
-  // if (link) {
-  //   ctx.link(0, -run.height - run.descent, run.advanceWidth, run.height, link);
-  // }
+  if (link) {
+    ctx.link(0, -height - descent, runAdvanceWidth, height, link);
+  }
 
-  // this.renderAttachments(run);
+  renderAttachments(ctx, run);
 
   if (font.sbix || (font.COLR && font.CPAL)) {
     ctx.save();
@@ -41,26 +80,30 @@ const renderRun = (ctx, run) => {
     ctx._addGlyphs(run.glyphs, run.positions, 0, 0);
   }
 
-  ctx.translate(run.advanceWidth, 0);
+  ctx.translate(runAdvanceWidth, 0);
 };
 
-const renderLine = (ctx, line) => {
-  const lineAscent = ascent(line.glyphString);
+const renderLine = (ctx, line, options) => {
+  const lineAscent = ascent(line);
+
+  if (options.outlineLines) {
+    ctx.rect(line.box.x, line.box.y, line.box.width, line.box.height).stroke();
+  }
 
   ctx.save();
-  ctx.translate(line.rect.x, line.rect.y + lineAscent);
+  ctx.translate(line.box.x, line.box.y + lineAscent);
 
-  for (const run of line.glyphString.runs) {
+  for (const run of line.runs) {
     // if (run.attributes.backgroundColor) {
     //   const backgroundRect = new Rect(0, -line.ascent, run.advanceWidth, line.rect.height);
     //   this.renderBackground(backgroundRect, run.attributes.backgroundColor);
     // }
-    renderRun(ctx, run);
+    renderRun(ctx, run, options);
   }
 
   ctx.restore();
   ctx.save();
-  ctx.translate(line.rect.x, line.rect.y);
+  ctx.translate(line.box.x, line.box.y);
 
   // for (const decorationLine of line.decorationLines) {
   //   this.renderDecorationLine(decorationLine);
@@ -69,15 +112,15 @@ const renderLine = (ctx, line) => {
   ctx.restore();
 };
 
-// const renderBlock = (ctx, block) => {
-//   for (const line of block) {
-//     // console.log(line);
-//   }
-// };
+const renderBlock = (ctx, block, options) => {
+  for (const line of block) {
+    renderLine(ctx, line, options);
+  }
+};
 
-const render = (ctx, lines) => {
-  for (const line of lines) {
-    renderLine(ctx, line);
+const render = (ctx, blocks, options = {}) => {
+  for (const block of blocks) {
+    renderBlock(ctx, block, options);
   }
 };
 
@@ -86,50 +129,6 @@ export default { render };
 // renderBackground(rect, backgroundColor) {
 //   this.ctx.rect(rect.x, rect.y, rect.width, rect.height);
 //   this.ctx.fill(backgroundColor);
-// }
-
-// renderAttachments(run) {
-//   this.ctx.save();
-
-//   const { font } = run.attributes;
-//   const space = font.glyphForCodePoint(0x20);
-//   const objectReplacement = font.glyphForCodePoint(0xfffc);
-
-//   for (let i = 0; i < run.glyphs.length; i++) {
-//     const position = run.positions[i];
-//     const glyph = run.glyphs[i];
-
-//     this.ctx.translate(position.xAdvance, position.yOffset);
-
-//     if (glyph.id === objectReplacement.id && run.attributes.attachment) {
-//       this.renderAttachment(run.attributes.attachment);
-//       run.glyphs[i] = space;
-//     }
-//   }
-
-//   this.ctx.restore();
-// }
-
-// renderAttachment(attachment) {
-//   const { xOffset = 0, yOffset = 0 } = attachment;
-
-//   this.ctx.translate(-attachment.width + xOffset, -attachment.height + yOffset);
-
-//   if (this.outlineAttachments) {
-//     this.ctx.rect(0, 0, attachment.width, attachment.height).stroke();
-//   }
-
-//   if (typeof attachment.render === 'function') {
-//     this.ctx.rect(0, 0, attachment.width, attachment.height);
-//     this.ctx.clip();
-//     attachment.render(this.ctx);
-//   } else if (attachment.image) {
-//     this.ctx.image(attachment.image, 0, 0, {
-//       fit: [attachment.width, attachment.height],
-//       align: 'center',
-//       valign: 'bottom'
-//     });
-//   }
 // }
 
 // renderDecorationLine(line) {

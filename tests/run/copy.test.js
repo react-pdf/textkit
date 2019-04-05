@@ -11,4 +11,13 @@ describe('run copy operator', () => {
     expect(copied).toHaveProperty('end', 15);
     expect(copied).toHaveProperty('attributes', attributes);
   });
+
+  test('should preserve same font instance', () => {
+    const font = { layout: () => {} };
+    const attributes = { font };
+    const run = { start: 5, end: 15, attributes };
+    const copied = copy(run);
+
+    expect(copied.attributes.font).toBe(font);
+  });
 });

@@ -6,22 +6,30 @@ import generateGlyphs from './generateGlyphs';
 import resolveYOffset from './resolveYOffset';
 import preprocessRuns from './preprocessRuns';
 import splitParagraphs from './splitParagraphs';
-import finalizeFragments from './finalizeFragments';
+// import finalizeFragments from './finalizeFragments';
 import resolveAttachments from './resolveAttachments';
 import applyDefaultStyles from './applyDefaultStyles';
 
 /**
  * A LayoutEngine is the main object that performs text layout.
- * It accepts an AttributedString and a list of Container objects
+ * It accepts an AttributedString and a Container object
  * to layout text into, and uses several helper objects to perform
  * various layout tasks. These objects can be overridden to customize
  * layout behavior.
+ *
+ * @param  {Object}  engines
+ * @param  {Object}  attributted string
+ * @param  {Object}  container rect
+ * @return {Array} paragraph blocks
  */
-
-const layoutEngine = (engines, attributedString, containers) =>
+const layoutEngine = (engines, attributedString, container) =>
   R.compose(
-    finalizeFragments(engines),
-    typesetter(engines)(containers),
+    // finalizeFragments(engines),
+    typesetter(engines)(container),
+    // R.tap(a => {
+    //   console.log(a[0].runs);
+
+    // }),
     resolveYOffset(engines),
     resolveAttachments(engines),
     generateGlyphs(engines),

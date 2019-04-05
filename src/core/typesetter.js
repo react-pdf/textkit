@@ -2,46 +2,51 @@ import * as R from 'ramda';
 
 import copyRect from '../rect/copy';
 import cropRect from '../rect/crop';
-import blockHeight from '../block/height';
 import layoutParagraph from './layoutParagraph';
 
-const applyContainerDefault = R.applySpec({
-  path: R.prop('path'),
-  blocks: R.propOr([], 'blocks'),
-  columns: R.propOr(1, 'columns'),
-  columnGap: R.propOr(18, 'columnGap') // 1/4 inch
-});
+/**
+ * Get paragrpah block height
+ *
+ * @param  {Object}  paragraph block
+ * @return {number} paragraph block height
+ */
+const blockHeight = R.compose(
+  R.sum,
+  R.map(R.prop('height')),
+  R.pluck('box')
+);
 
-const typesetter = engines => containers => attributedStrings => {
+/**
+ * Layout paragraphs inside container until it does not
+ * fit anymore, performing line wrapping in the process.
+ *
+ * @param  {Object}  engines
+ * @param  {Object}  container rect
+ * @param  {Object}  attributed strings (paragraphs)
+ * @return {Array} paragraph blocks
+ */
+const typesetter = (engines, container, attributedStrings) => {
+  const blocks = [];
   const paragraphs = [...attributedStrings];
 
-  const layoutContainer = container => {
-    const blocks = [];
+  let paragraphRect = copyRect(container);
+  let nextParagraph = paragraphs.shift();
 
-    let paragraphRect = copyRect(container.path);
-    let nextParagraph = paragraphs.shift();
+  while (nextParagraph) {
+    const block = layoutParagraph(engines)(paragraphRect, nextParagraph);
+    const linesHeight = blockHeight(block);
 
-    while (nextParagraph) {
-      const block = layoutParagraph(engines)(paragraphRect, nextParagraph);
-      const linesHeight = blockHeight(block);
-
-      if (paragraphRect.height >= linesHeight) {
-        blocks.push(block);
-        paragraphRect = cropRect(linesHeight, paragraphRect);
-        nextParagraph = paragraphs.shift();
-      } else {
-        paragraphs.unshift(nextParagraph);
-        break;
-      }
+    if (paragraphRect.height >= linesHeight) {
+      blocks.push(block);
+      paragraphRect = cropRect(linesHeight, paragraphRect);
+      nextParagraph = paragraphs.shift();
+    } else {
+      paragraphs.unshift(nextParagraph);
+      break;
     }
+  }
 
-    return blocks;
-  };
-
-  return R.compose(
-    R.flatten,
-    R.map(R.o(layoutContainer, applyContainerDefault))
-  )(containers);
+  return blocks;
 };
 
-export default typesetter;
+export default R.curryN(3, typesetter);

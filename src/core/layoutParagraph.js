@@ -2,6 +2,19 @@ import * as R from 'ramda';
 
 import stringHeight from '../attributedString/height';
 
+const ATTACHMENT_CODE = '\ufffc'; // 65532
+
+const purgeAttachments = R.when(
+  R.compose(
+    R.not,
+    R.includes(ATTACHMENT_CODE),
+    R.prop('string')
+  ),
+  R.evolve({
+    runs: R.map(R.evolve({ attributes: R.dissoc('attachment') }))
+  })
+);
+
 /**
  * Layout paragraphs inside rectangle
  *
@@ -12,17 +25,23 @@ import stringHeight from '../attributedString/height';
 const layoutLines = (rect, lines) => {
   let currentY = rect.y;
 
-  const lineFragments = lines.map(line => {
-    const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
-    const height = Math.max(stringHeight(line), style.lineHeight);
-    const lineBox = { x: rect.x, y: currentY, width: rect.width, height };
+  return R.map(
+    R.compose(
+      line => {
+        const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
+        const height = Math.max(stringHeight(line), style.lineHeight);
+        const box = { x: rect.x, y: currentY, width: rect.width, height };
 
-    currentY += height;
+        currentY += height;
 
-    return { rect: lineBox, glyphString: R.omit(['syllables'], line) };
-  });
-
-  return lineFragments;
+        return R.compose(
+          R.assoc('box', box),
+          R.omit(['syllables'])
+        )(line);
+      },
+      purgeAttachments
+    )
+  )(lines);
 };
 
 /**

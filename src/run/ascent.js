@@ -19,10 +19,4 @@ const ascent = R.converge(R.max, [
   R.converge(R.multiply, [scale, getFontAscent])
 ]);
 
-// const ascent = this.attributes.font.ascent * this.scale;
-
-// if (this.attributes.attachment) {
-//   return Math.max(ascent, this.attributes.attachment.height);
-// }
-
 export default ascent;
