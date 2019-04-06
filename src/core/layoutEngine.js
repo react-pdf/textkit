@@ -23,22 +23,46 @@ import applyDefaultStyles from './applyDefaultStyles';
  * @return {Array} paragraph blocks
  */
 const layoutEngine = (engines, attributedString, container) => {
-  let hrstart;
+  let wrapPerformance;
+  let glyphsPerformance;
+  let attachmentsPerformance;
+  let yOffsetPerformance;
+  let typesetterPerformance;
 
   return R.compose(
     finalizeFragments(engines),
-    // R.tap(() => {
-    //   const hrend = process.hrtime(hrstart);
-    //   console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
-    // }),
+    R.tap(() => {
+      const hrend = process.hrtime(typesetterPerformance);
+      console.info('Typesetter: %dms', hrend[1] / 1000000);
+    }),
     typesetter(engines)(container),
-    // R.tap(() => {
-    //   hrstart = process.hrtime();
-    // }),
+    R.tap(() => {
+      typesetterPerformance = process.hrtime();
+      const hrend = process.hrtime(yOffsetPerformance);
+      console.info('YOffset: %dms', hrend[1] / 1000000);
+    }),
     resolveYOffset(engines),
+    R.tap(() => {
+      yOffsetPerformance = process.hrtime();
+      const hrend = process.hrtime(attachmentsPerformance);
+      console.info('Attachments: %dms', hrend[1] / 1000000);
+    }),
     resolveAttachments(engines),
+    R.tap(() => {
+      attachmentsPerformance = process.hrtime();
+      const hrend = process.hrtime(glyphsPerformance);
+      console.info('Glyphs: %dms', hrend[1] / 1000000);
+    }),
     generateGlyphs(engines),
+    R.tap(() => {
+      glyphsPerformance = process.hrtime();
+      const hrend = process.hrtime(wrapPerformance);
+      console.info('Wrapping: %dms', hrend[1] / 1000000);
+    }),
     wrapWords(engines),
+    R.tap(() => {
+      wrapPerformance = process.hrtime();
+    }),
     splitParagraphs(engines),
     preprocessRuns(engines),
     applyDefaultStyles(engines)

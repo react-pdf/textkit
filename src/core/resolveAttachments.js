@@ -4,7 +4,7 @@ const ATTACHMENT_CODE = 0xfffc; // 65532
 
 const mapIndexed = R.addIndex(R.map);
 const getGlyphs = R.propOr([], 'glyphs');
-const getAttachment = R.path(['attributes', 'attachment']);
+const getAttachment = R.pathOr({}, ['attributes', 'attachment']);
 const isReplaceGlyph = R.o(R.includes(ATTACHMENT_CODE), R.propOr([], 'codePoints'));
 
 /**
@@ -16,18 +16,14 @@ const isReplaceGlyph = R.o(R.includes(ATTACHMENT_CODE), R.propOr([], 'codePoints
 const resolveRunAttachments = run => {
   const glyphs = getGlyphs(run);
   const attachment = getAttachment(run);
+  const attachmentWidth = R.always(attachment.width);
 
   return R.evolve({
     positions: mapIndexed((position, i) => {
       const glyph = glyphs[i];
 
       if (isReplaceGlyph(glyph)) {
-        return R.evolve(
-          {
-            xAdvance: R.always(attachment.width)
-          },
-          position
-        );
+        return R.evolve({ xAdvance: attachmentWidth }, position);
       }
 
       return position;

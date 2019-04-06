@@ -3,7 +3,6 @@ import * as R from 'ramda';
 import scale from '../run/scale';
 import resolveGlyphIndices from '../indices/resolve';
 
-const mapIndexed = R.addIndex(R.map);
 const getCharacterSpacing = R.pathOr(0, ['attributes', 'characterSpacing']);
 
 /**
@@ -17,22 +16,21 @@ const scalePositions = (run, positions) => {
   const multScale = R.multiply(scale(run));
   const characterSpacing = getCharacterSpacing(run);
 
-  return mapIndexed((pos, i, list) => {
-    const isLast = i === list.length - 1;
+  const scalePosition = R.evolve({
+    xAdvance: R.o(R.add(characterSpacing), multScale),
+    yAdvance: multScale,
+    xOffset: multScale,
+    yOffset: multScale
+  });
 
-    return R.evolve({
-      xAdvance: R.compose(
-        R.when(
-          R.always(!isLast),
-          R.add(characterSpacing) // Add char spacing
-        ),
-        multScale
-      ),
-      yAdvance: multScale,
-      xOffset: multScale,
-      yOffset: multScale
-    })(pos);
-  }, positions);
+  const subCharacterSpacing = R.evolve({
+    xAdvance: R.subtract(R.__, characterSpacing)
+  });
+
+  return R.compose(
+    R.adjust(-1, subCharacterSpacing),
+    R.map(scalePosition)
+  )(positions);
 };
 
 /**

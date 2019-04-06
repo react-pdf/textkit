@@ -2,7 +2,7 @@ import bestFit from '../lib/bestFit';
 import linebreak from '../lib/linebreak';
 import slice from '../attributedString/slice';
 import insertGlyph from '../attributedString/insertGlyph';
-import advanceWidth from '../attributedString/advanceWidth';
+import advanceWidthBetween from '../attributedString/advanceWidthBetween';
 
 const HYPHEN = 0x002d;
 const TOLERANCE_STEPS = 5;
@@ -55,8 +55,7 @@ const getNodes = (attributedString, { align }) => {
   const { syllables } = attributedString;
 
   const result = syllables.reduce((acc, s, index) => {
-    const syllable = slice(start, start + s.length, attributedString);
-    const width = advanceWidth(syllable);
+    const width = advanceWidthBetween(start, start + s.length, attributedString);
 
     if (s.trim() === '') {
       const stretch = (width * opts.width) / opts.stretch;

@@ -12,8 +12,8 @@ import glyphIndexAt from './glyphIndexAt';
  */
 const advanceWidthBetween = (start, end, run) => {
   const runStart = R.propOr(0, 'start', run);
-  const glyphStartIndex = glyphIndexAt(start - runStart, run);
-  const glyphEndIndex = glyphIndexAt(end - runStart, run);
+  const glyphStartIndex = Math.max(0, glyphIndexAt(start - runStart, run));
+  const glyphEndIndex = Math.max(0, glyphIndexAt(end - runStart, run));
 
   return R.compose(
     R.reduce(R.useWith(R.add, [R.identity, R.propOr(0, 'xAdvance')]), 0),
@@ -22,4 +22,4 @@ const advanceWidthBetween = (start, end, run) => {
   )(run);
 };
 
-export default advanceWidthBetween;
+export default R.curryN(3, advanceWidthBetween);

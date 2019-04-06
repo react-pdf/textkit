@@ -18,11 +18,13 @@ const sliceRuns = (start, end) => runs => {
   const lastRun = a => sliceRun(0, end - a.start, a);
   const intermediateRun = R.identity;
 
-  return mapIndexed([
+  const res = mapIndexed([
     R.o(subtractRun(start), firstRun), // Slice first run
     R.o(subtractRun(start), intermediateRun), // Slice intermediate runs
     R.o(subtractRun(start), lastRun) // Slice last run
   ])(runs);
+
+  return res;
 };
 
 /**
@@ -33,8 +35,9 @@ const sliceRuns = (start, end) => runs => {
  * @param  {Object}  attributedString
  * @return {Object} attributedString
  */
-const slice = (start, end, string) =>
-  R.ifElse(
+const slice = (start, end, string) => {
+  // const totalStartPerf = process.hrtime();
+  const res = R.ifElse(
     R.pathEq(['string', 'length'], 0),
     R.identity,
     R.evolve({
@@ -45,5 +48,11 @@ const slice = (start, end, string) =>
       )
     })
   )(string);
+
+  // const totalEndPerf = process.hrtime(totalStartPerf);
+  // console.info('Total: %dms', totalEndPerf[1] / 1000000);
+
+  return res;
+};
 
 export default R.curryN(3, slice);
