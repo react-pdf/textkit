@@ -65,18 +65,9 @@ const layoutRun = string => run => {
  * @param  {Array}  attributed strings
  * @return {Array} attributed string with glyphs
  */
-const stringToGlyphs = attributedString =>
+const generateGlyphs = () => attributedString =>
   R.evolve({
     runs: R.map(layoutRun(attributedString.string))
   })(attributedString);
-
-/**
- * Generate glyphs for multiple paragraphs
- *
- * @param  {Object} layout engines
- * @param  {Array}  attributed strings (paragraphs)
- * @return {Array} attributed strings with glyphs
- */
-const generateGlyphs = () => R.map(stringToGlyphs);
 
 export default generateGlyphs;

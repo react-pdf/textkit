@@ -27,10 +27,8 @@ const resolveRunYOffset = run => {
  * @return {Array} attributed strings (paragraphs)
  */
 const resolveYOffset = () =>
-  R.map(
-    R.evolve({
-      runs: R.map(resolveRunYOffset)
-    })
-  );
+  R.evolve({
+    runs: R.map(resolveRunYOffset)
+  });
 
 export default resolveYOffset;

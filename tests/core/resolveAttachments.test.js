@@ -5,11 +5,6 @@ import resolveAttachments from '../../src/core/resolveAttachments';
 const instance = resolveAttachments();
 
 describe('resolveAttachments', () => {
-  test('should return no attributed strings if none provided', () => {
-    const result = instance([]);
-    expect(result).toEqual([]);
-  });
-
   test('should return same string if no attributes present', () => {
     const string = {
       string: 'Lorem',
@@ -35,11 +30,10 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if no attachment present', () => {
@@ -68,11 +62,10 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if no attachment code point present', () => {
@@ -101,11 +94,10 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if attachment code point present but no attachment passed', () => {
@@ -133,11 +125,10 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should not mutate passed string', () => {
@@ -167,7 +158,7 @@ describe('resolveAttachments', () => {
       ]
     };
 
-    instance([string]);
+    instance(string);
 
     expect(string.runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
     expect(R.pluck('id', string.runs[0].glyphs)).toEqual([76, 111, 65532, 101, 109]);
@@ -200,12 +191,11 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
-    expect(R.pluck('id', result[0].runs[0].glyphs)).toEqual([76, 111, 65532, 101, 109]);
-    expect(R.pluck('xAdvance', result[0].runs[0].positions)).toEqual([8, 7, 20, 5, 4]);
+    expect(result.runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([76, 111, 65532, 101, 109]);
+    expect(R.pluck('xAdvance', result.runs[0].positions)).toEqual([8, 7, 20, 5, 4]);
   });
 
   test('should change attachment glyph position appropiately when ligature is present before', () => {
@@ -232,12 +222,11 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].runs[0].glyphIndices).toEqual([0, 0, 1, 2, 3]);
-    expect(R.pluck('id', result[0].runs[0].glyphs)).toEqual([64257, 65532, 101, 109]);
-    expect(R.pluck('xAdvance', result[0].runs[0].positions)).toEqual([10, 20, 5, 4]);
+    expect(result.runs[0].glyphIndices).toEqual([0, 0, 1, 2, 3]);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([64257, 65532, 101, 109]);
+    expect(R.pluck('xAdvance', result.runs[0].positions)).toEqual([10, 20, 5, 4]);
   });
 
   test('should change attachment glyph position appropiately when ligature is present after', () => {
@@ -264,11 +253,10 @@ describe('resolveAttachments', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].runs[0].glyphIndices).toEqual([0, 1, 2, 2, 3]);
-    expect(R.pluck('id', result[0].runs[0].glyphs)).toEqual([76, 65532, 64257, 109]);
-    expect(R.pluck('xAdvance', result[0].runs[0].positions)).toEqual([7, 20, 10, 4]);
+    expect(result.runs[0].glyphIndices).toEqual([0, 1, 2, 2, 3]);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([76, 65532, 64257, 109]);
+    expect(R.pluck('xAdvance', result.runs[0].positions)).toEqual([7, 20, 10, 4]);
   });
 });

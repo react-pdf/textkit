@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import fromFragments from '../../src/attributedString/fromFragments';
 
 /**
@@ -18,7 +16,7 @@ const defaultHyphenationEngine = word => [word];
  * @param  {Object}  attributed string
  * @return {Object} attributed string including syllables
  */
-const wrapStringWords = engines => attributedString => {
+const wrapWords = (engines = {}) => attributedString => {
   const syllables = [];
   const fragments = [];
   const hyphenateWord = engines.wordHyphenation || defaultHyphenationEngine;
@@ -41,14 +39,5 @@ const wrapStringWords = engines => attributedString => {
 
   return { ...fromFragments(fragments), syllables };
 };
-
-/**
- * Wrap words of many attribute string
- *
- * @param  {Object} layout engines
- * @param  {Array}  attributed strings (paragraphs)
- * @return {Array} attributed strings and syllables
- */
-const wrapWords = (engines = {}) => R.map(wrapStringWords(engines));
 
 export default wrapWords;

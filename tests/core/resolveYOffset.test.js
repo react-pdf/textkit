@@ -6,11 +6,6 @@ import resolveYOffset from '../../src/core/resolveYOffset';
 const instance = resolveYOffset();
 
 describe('resolveYOffset', () => {
-  test('should return no attributed strings if none provided', () => {
-    const result = instance([]);
-    expect(result).toEqual([]);
-  });
-
   test('should return same string if no attributes present', () => {
     const string = {
       string: 'Lorem',
@@ -36,11 +31,10 @@ describe('resolveYOffset', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if no yOffset present', () => {
@@ -69,11 +63,10 @@ describe('resolveYOffset', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if no font present', () => {
@@ -102,11 +95,10 @@ describe('resolveYOffset', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should return same string if no positions present', () => {
@@ -128,11 +120,10 @@ describe('resolveYOffset', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).not.toBe(string);
-    expect(result[0]).toEqual(string);
+    expect(result).not.toBe(string);
+    expect(result).toEqual(string);
   });
 
   test('should not mutate passed string', () => {
@@ -162,7 +153,7 @@ describe('resolveYOffset', () => {
       ]
     };
 
-    instance([string]);
+    instance(string);
 
     expect(string.runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
     expect(R.pluck('id', string.runs[0].glyphs)).toEqual([76, 111, 114, 101, 109]);
@@ -195,12 +186,11 @@ describe('resolveYOffset', () => {
         }
       ]
     };
-    const result = instance([string]);
+    const result = instance(string);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
-    expect(R.pluck('id', result[0].runs[0].glyphs)).toEqual([76, 111, 114, 101, 109]);
-    expect(R.pluck('xAdvance', result[0].runs[0].positions)).toEqual([8, 7, 6, 5, 4]);
-    expect(R.pluck('yOffset', result[0].runs[0].positions)).toEqual([40, 40, 40, 40, 40]); // yOffset * font.unitsPerEm
+    expect(result.runs[0].glyphIndices).toEqual([0, 1, 2, 3, 4]);
+    expect(R.pluck('id', result.runs[0].glyphs)).toEqual([76, 111, 114, 101, 109]);
+    expect(R.pluck('xAdvance', result.runs[0].positions)).toEqual([8, 7, 6, 5, 4]);
+    expect(R.pluck('yOffset', result.runs[0].positions)).toEqual([40, 40, 40, 40, 40]); // yOffset * font.unitsPerEm
   });
 });

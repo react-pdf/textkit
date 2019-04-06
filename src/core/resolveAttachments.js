@@ -39,10 +39,8 @@ const resolveRunAttachments = run => {
  * @return {Array} attributed strings (paragraphs)
  */
 const resolveAttachments = () =>
-  R.map(
-    R.evolve({
-      runs: R.map(resolveRunAttachments)
-    })
-  );
+  R.evolve({
+    runs: R.map(resolveRunAttachments)
+  });
 
 export default resolveAttachments;
