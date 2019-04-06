@@ -22,10 +22,19 @@ import applyDefaultStyles from './applyDefaultStyles';
  * @param  {Object}  container rect
  * @return {Array} paragraph blocks
  */
-const layoutEngine = (engines, attributedString, container) =>
-  R.compose(
+const layoutEngine = (engines, attributedString, container) => {
+  let hrstart;
+
+  return R.compose(
     finalizeFragments(engines),
+    // R.tap(() => {
+    //   const hrend = process.hrtime(hrstart);
+    //   console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
+    // }),
     typesetter(engines)(container),
+    // R.tap(() => {
+    //   hrstart = process.hrtime();
+    // }),
     resolveYOffset(engines),
     resolveAttachments(engines),
     generateGlyphs(engines),
@@ -34,5 +43,6 @@ const layoutEngine = (engines, attributedString, container) =>
     preprocessRuns(engines),
     applyDefaultStyles(engines)
   )(attributedString);
+};
 
 export default R.curryN(3, layoutEngine);

@@ -1,30 +1,22 @@
 import * as R from 'ramda';
 
-import copy from '../attributedString/copy';
+const getYOffset = R.pathOr(0, ['attributes', 'yOffset']);
+const getUnitsPerEm = R.pathOr(0, ['attributes', 'font', 'unitsPerEm']);
 
 /**
- * Resolves yOffset for attributed string
+ * Resolves yOffset for run
  *
- * @param  {Object}  attributed string
- * @return {Object} attributed string
+ * @param  {Object}  run
+ * @return {Object} run
  */
-const resolveStringYOffset = string => {
-  const newString = copy(string);
+const resolveRunYOffset = run => {
+  const unitsPerEm = getUnitsPerEm(run);
+  const yOffset = getYOffset(run);
+  const mult = yOffset * unitsPerEm;
 
-  for (const run of newString.runs) {
-    const font = R.path(['attributes', 'font'], run);
-    const yOffset = R.path(['attributes', 'yOffset'], run);
-    const positions = R.prop('positions', run);
-
-    if (!yOffset || !font || !positions) continue;
-
-    for (const position of run.positions) {
-      position.yOffset = position.yOffset || 0;
-      position.yOffset += yOffset * font.unitsPerEm;
-    }
-  }
-
-  return newString;
+  return R.evolve({
+    positions: R.map(R.assoc('yOffset', mult))
+  })(run);
 };
 
 /**
@@ -34,6 +26,11 @@ const resolveStringYOffset = string => {
  * @param  {Array}  attributed strings (paragraphs)
  * @return {Array} attributed strings (paragraphs)
  */
-const resolveYOffset = () => R.map(resolveStringYOffset);
+const resolveYOffset = () =>
+  R.map(
+    R.evolve({
+      runs: R.map(resolveRunYOffset)
+    })
+  );
 
 export default resolveYOffset;

@@ -2,6 +2,7 @@ import * as R from 'ramda';
 
 import copy from './copy';
 import scale from './scale';
+import getFont from './getFont';
 import isNumber from '../utils/isNumber';
 import prependIndices from '../indices/prepend';
 import glyphFromCodePoint from '../glyph/fromCodePoint';
@@ -35,7 +36,7 @@ const prependGlyph = (glyph, run) => {
 const prepend = (value, run) => {
   if (!value) return copy(run);
 
-  const font = R.path(['attributes', 'font'], run);
+  const font = getFont(run);
   const glyph = isNumber(value) ? glyphFromCodePoint(value, font) : value;
 
   return prependGlyph(glyph, run);

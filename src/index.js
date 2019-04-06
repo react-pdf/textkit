@@ -1,11 +1,13 @@
 import layoutEngine from './core/layoutEngine';
-import fontSubstitution from './engines/fontSubstitution';
+import lineBreaker from './engines/lineBreaker';
+import justification from './engines/justification';
 import scriptItemizer from './engines/scriptItemizer';
 import wordHyphenation from './engines/wordHyphenation';
-import lineBreaker from './engines/lineBreaker';
+import fontSubstitution from './engines/fontSubstitution';
 
 const engines = {
   lineBreaker,
+  justification,
   scriptItemizer,
   wordHyphenation,
   fontSubstitutionEngine: fontSubstitution

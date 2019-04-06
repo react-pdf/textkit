@@ -9,6 +9,8 @@ import copyRun from '../run/copy';
  * @return {Object} cloned attributed string
  */
 const copy = R.evolve({
+  string: R.identity,
+  syllables: R.identity,
   runs: R.map(copyRun)
 });
 

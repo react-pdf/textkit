@@ -4,6 +4,7 @@ import scale from '../run/scale';
 import resolveGlyphIndices from '../indices/resolve';
 
 const mapIndexed = R.addIndex(R.map);
+const getCharacterSpacing = R.pathOr(0, ['attributes', 'characterSpacing']);
 
 /**
  * Scale run positions
@@ -14,7 +15,7 @@ const mapIndexed = R.addIndex(R.map);
  */
 const scalePositions = (run, positions) => {
   const multScale = R.multiply(scale(run));
-  const characterSpacing = R.pathOr(0, ['attributes', 'characterSpacing'], run);
+  const characterSpacing = getCharacterSpacing(run);
 
   return mapIndexed((pos, i, list) => {
     const isLast = i === list.length - 1;

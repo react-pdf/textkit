@@ -26,11 +26,11 @@ describe('resolveYOffset', () => {
             { id: 109, codePoints: [109] } // m
           ],
           positions: [
-            { xAdvance: 8 }, // l
-            { xAdvance: 7 }, // o
-            { xAdvance: 6 }, // r
-            { xAdvance: 5 }, // e
-            { xAdvance: 4 } // m
+            { xAdvance: 8, yOffset: 0 }, // l
+            { xAdvance: 7, yOffset: 0 }, // o
+            { xAdvance: 6, yOffset: 0 }, // r
+            { xAdvance: 5, yOffset: 0 }, // e
+            { xAdvance: 4, yOffset: 0 } // m
           ],
           glyphIndices: [0, 1, 2, 3, 4]
         }
@@ -58,11 +58,11 @@ describe('resolveYOffset', () => {
             { id: 109, codePoints: [109] } // m
           ],
           positions: [
-            { xAdvance: 8 }, // l
-            { xAdvance: 7 }, // o
-            { xAdvance: 6 }, // r
-            { xAdvance: 5 }, // e
-            { xAdvance: 4 } // m
+            { xAdvance: 8, yOffset: 0 }, // l
+            { xAdvance: 7, yOffset: 0 }, // o
+            { xAdvance: 6, yOffset: 0 }, // r
+            { xAdvance: 5, yOffset: 0 }, // e
+            { xAdvance: 4, yOffset: 0 } // m
           ],
           glyphIndices: [0, 1, 2, 3, 4],
           attributes: { something: 'blah' }
@@ -91,11 +91,11 @@ describe('resolveYOffset', () => {
             { id: 109, codePoints: [109] } // m
           ],
           positions: [
-            { xAdvance: 8 }, // l
-            { xAdvance: 7 }, // o
-            { xAdvance: 6 }, // r
-            { xAdvance: 5 }, // e
-            { xAdvance: 4 } // m
+            { xAdvance: 8, yOffset: 0 }, // l
+            { xAdvance: 7, yOffset: 0 }, // o
+            { xAdvance: 6, yOffset: 0 }, // r
+            { xAdvance: 5, yOffset: 0 }, // e
+            { xAdvance: 4, yOffset: 0 } // m
           ],
           glyphIndices: [0, 1, 2, 3, 4],
           attributes: { yOffset: 20 }
@@ -150,11 +150,11 @@ describe('resolveYOffset', () => {
             { id: 109, codePoints: [109] } // m
           ],
           positions: [
-            { xAdvance: 8 }, // l
-            { xAdvance: 7 }, // o
-            { xAdvance: 6 }, // r
-            { xAdvance: 5 }, // e
-            { xAdvance: 4 } // m
+            { xAdvance: 8, yOffset: 0 }, // l
+            { xAdvance: 7, yOffset: 0 }, // o
+            { xAdvance: 6, yOffset: 0 }, // r
+            { xAdvance: 5, yOffset: 0 }, // e
+            { xAdvance: 4, yOffset: 0 } // m
           ],
           glyphIndices: [0, 1, 2, 3, 4],
           attributes: { yOffset: 20, font }

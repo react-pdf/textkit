@@ -9,7 +9,7 @@ import * as R from 'ramda';
 const applyRunStyles = R.evolve({
   attributes: a => ({
     align: a.align || 'left',
-    alignLastLine: a.alignLastLine || (a.align === 'justify' ? 'left' : a.align),
+    alignLastLine: a.alignLastLine || (a.align === 'justify' ? 'left' : a.align || 'left'),
     attachment: a.attachment || null,
     backgroundColor: a.backgroundColor || null,
     bidiLevel: a.bidiLevel || null,

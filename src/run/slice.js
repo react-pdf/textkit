@@ -2,6 +2,7 @@ import * as R from 'ramda';
 
 import scale from './scale';
 import offset from './offset';
+import getFont from './getFont';
 import sliceGlyph from '../glyph/slice';
 import glyphIndexAt from './glyphIndexAt';
 import normalizeIndices from '../indices/normalize';
@@ -16,7 +17,7 @@ import normalizeIndices from '../indices/normalize';
  */
 const slice = (start, end, run) => {
   const runScale = scale(run);
-  const font = R.path(['attributes', 'font'])(run);
+  const font = getFont(run);
 
   // Get glyph start and end indices
   const glyphStartIndex = glyphIndexAt(start, run);

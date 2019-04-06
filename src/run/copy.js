@@ -7,6 +7,7 @@ import * as R from 'ramda';
  * @return {Object} cloned run
  */
 const copy = R.evolve({
+  glyphs: R.map(R.identity),
   positions: R.clone,
   glyphIndices: R.clone,
   attributes: R.evolve({

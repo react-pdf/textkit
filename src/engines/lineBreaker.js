@@ -1,7 +1,6 @@
 import bestFit from '../lib/bestFit';
 import linebreak from '../lib/linebreak';
 import slice from '../attributedString/slice';
-import stringEnd from '../attributedString/end';
 import insertGlyph from '../attributedString/insertGlyph';
 import advanceWidth from '../attributedString/advanceWidth';
 
@@ -29,6 +28,7 @@ const breakLines = (string, nodes, breaks) => {
     let line;
     if (node.type === 'penalty') {
       end = prevNode.value.end;
+
       line = slice(start, end, string);
       line = insertGlyph(line.length, HYPHEN, line);
     } else {
@@ -56,18 +56,19 @@ const getNodes = (attributedString, { align }) => {
 
   const result = syllables.reduce((acc, s, index) => {
     const syllable = slice(start, start + s.length, attributedString);
+    const width = advanceWidth(syllable);
 
-    if (syllable.string.trim() === '') {
-      const width = advanceWidth(syllable);
+    if (s.trim() === '') {
       const stretch = (width * opts.width) / opts.stretch;
       const shrink = (width * opts.width) / opts.shrink;
-      const value = { value: syllable, start, end: start + stringEnd(syllable) };
+      const value = { start, end: start + s.length };
 
       acc.push(linebreak.glue(width, value, stretch, shrink));
     } else {
       const hyphenated = syllables[index + 1] !== ' ';
-      const value = { value: syllable, start, end: start + stringEnd(syllable) };
-      acc.push(linebreak.box(advanceWidth(syllable), value, hyphenated));
+
+      const value = { start, end: start + s.length };
+      acc.push(linebreak.box(width, value, hyphenated));
 
       if (syllables[index + 1] && hyphenated) {
         acc.push(linebreak.penalty(hyphenWidth, hyphenPenalty, 1));

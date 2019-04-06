@@ -1,7 +1,5 @@
 import * as R from 'ramda';
 
-import count from '../utils/count';
-
 /**
  * Get ligature offset by index
  *
@@ -19,7 +17,8 @@ const offset = (index, run) => {
   const value = R.pathOr(null, ['glyphIndices', index], run);
 
   return R.compose(
-    count(value),
+    R.length,
+    R.dropWhile(R.gt(value)),
     R.slice(0, index),
     R.propOr([], 'glyphIndices')
   )(run);

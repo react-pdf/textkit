@@ -4,6 +4,7 @@ import copy from './copy';
 import slice from './slice';
 import concat from './concat';
 import append from './append';
+import getFont from './getFont';
 import isNumber from '../utils/isNumber';
 import glyphFromCodePoint from '../glyph/fromCodePoint';
 
@@ -34,7 +35,7 @@ const insertGlyph = (index, glyph, run) => {
  * @return {Object}  run with glyph
  */
 const insert = (index, value, run) => {
-  const font = R.path(['attributes', 'font'], run);
+  const font = getFont(run);
   const glyph = isNumber(value) ? glyphFromCodePoint(value, font) : value;
   return insertGlyph(index, glyph, run);
 };
