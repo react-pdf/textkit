@@ -12,41 +12,63 @@ const ALIGNMENT_FACTORS = {
   justify: 0
 };
 
-// TODO: Make it immutable
-const finalizeFragment = engines => (line, i, lines) => {
+// Remove new line char at the end of line
+const removeNewLine = R.when(
+  R.compose(
+    R.equals('\n'),
+    R.last,
+    R.prop('string')
+  ),
+  dropLast
+);
+
+// Ignore whitespace at the start and end of a line for alignment
+const adjustOverflow = line => {
+  const overflowLeft = R.converge(R.add, [R.propOr(0, 'overflowLeft'), leadingOffset])(line);
+  const overflowRight = R.converge(R.add, [R.propOr(0, 'overflowRight'), trailingOffset])(line);
+
+  return R.evolve(
+    {
+      overflowLeft: R.always(overflowLeft),
+      overflowRight: R.always(overflowRight),
+      box: R.evolve({
+        x: R.subtract(R.__, overflowLeft),
+        width: R.add(overflowLeft + overflowRight)
+      })
+    },
+    line
+  );
+};
+
+const justifyLine = (engines, align) => line => {
+  const lineAdvanceWidth = advanceWidth(line);
+  const remainingWidth = line.box.width - lineAdvanceWidth;
+  const shouldJustify = align === 'justify' || lineAdvanceWidth > line.box.width;
+
+  return R.compose(
+    R.when(R.always(shouldJustify), engines.justification),
+    R.evolve({ box: R.evolve({ x: R.add(remainingWidth * ALIGNMENT_FACTORS[align]) }) })
+  )(line);
+};
+
+const decorateLine = engines => line =>
+  // engines.decorationEngine(line);
+  line;
+
+const finalizeBlock = engines => (line, i, lines) => {
   const isLastFragment = i === lines.length - 1;
   const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
   const align = isLastFragment ? style.alignLastLine : style.align;
 
-  // Remove new line char at the end of line
-  if (R.last(line.string) === '\n') {
-    line = dropLast(line);
-  }
-
-  // Ignore whitespace at the start and end of a line for alignment
-  line.overflowLeft = line.overflowLeft || 0;
-  line.overflowLeft += leadingOffset(line);
-
-  line.overflowRight = line.overflowRight || 0;
-  line.overflowRight += trailingOffset(line);
-
-  line.box.x -= line.overflowLeft;
-  line.box.width += line.overflowLeft + line.overflowRight;
-
-  // Adjust line offset for alignment
-  const lineAdvanceWidth = advanceWidth(line);
-  const remainingWidth = line.box.width - lineAdvanceWidth;
-
-  line.box.x += remainingWidth * ALIGNMENT_FACTORS[align];
-
-  if (align === 'justify' || lineAdvanceWidth > line.box.width) {
-    engines.justification(line);
-  }
-  // engines.decorationEngine(line);
-  return line;
+  return R.compose(
+    decorateLine(engines),
+    justifyLine(engines, align),
+    adjustOverflow,
+    removeNewLine
+  )(line);
 };
 
 const finalizeFragments = (engines, blocks) =>
-  R.map(R.addIndex(R.map)(finalizeFragment(engines)), blocks);
+  R.map(R.addIndex(R.map)(finalizeBlock(engines)), blocks);
 
 export default R.curryN(2, finalizeFragments);

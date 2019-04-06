@@ -179,6 +179,10 @@ const assign = (gap, factors) => {
  * A JustificationEngine is used by a Typesetter to perform line fragment
  * justification. This implementation is based on a description of Apple's
  * justification algorithm from a PDF in the Apple Font Tools package.
+ *
+ * //TODO: Make it immutable
+ *
+ * @returns {Object} line
  */
 const justification = line => {
   const gap = line.box.width - advanceWidth(line);
@@ -201,6 +205,8 @@ const justification = line => {
       position.xAdvance += distances[index++];
     }
   }
+
+  return line;
 };
 
 export default justification;

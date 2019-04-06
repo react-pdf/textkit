@@ -14,7 +14,7 @@ const longString = fromFragments([
     attributes: {
       font,
       fontSize: 8,
-      align: 'center'
+      align: 'justify'
     }
   }
 ]);
@@ -36,6 +36,8 @@ doc.pipe(fs.createWriteStream(`${__dirname}/output.pdf`));
 const hrstart = process.hrtime();
 
 const container = { x: 20, y: 50, width: 570, height: 700 };
+
+doc.rect(container.x, container.y, container.width, container.height).stroke();
 
 const layout = layoutEngine(longString, container);
 
