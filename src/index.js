@@ -1,5 +1,5 @@
-import layoutEngine from './core/layoutEngine';
-import lineBreaker from './engines/lineBreaker';
+import layoutEngine from './layout';
+import lineBreaker from './engines/linebreaker';
 import justification from './engines/justification';
 import textDecoration from './engines/textDecoration';
 import scriptItemizer from './engines/scriptItemizer';

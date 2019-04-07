@@ -6,3 +6,4 @@ dist
 *.ttf
 lerna-debug.log
 test.js
+dist

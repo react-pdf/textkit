@@ -1,8 +1,9 @@
 import fs from 'fs';
 import PDFDocument from '@react-pdf/pdfkit';
 import fontkit from '@react-pdf/fontkit';
+
 import layoutEngine from './src';
-import PDFRenderer from './src/PDFRenderer';
+import PDFRenderer from './src/renderers/pdf';
 import fromFragments from './src/attributedString/fromFragments';
 
 const font = fontkit.openSync(`${__dirname}/font.ttf`);
