@@ -5,7 +5,7 @@ import empty from '../../attributedString/empty';
 const ignoredScripts = ['Common', 'Inherited', 'Unknown'];
 
 /**
- * ResolvesUnicode script in runs, grouping equal runs together
+ * Resolves unicode script in runs, grouping equal runs together
  *
  * @param  {Object}  layout options
  * @param  {Object}  attributed string

@@ -35,9 +35,8 @@ const sliceRuns = (start, end) => runs => {
  * @param  {Object}  attributedString
  * @return {Object} attributedString
  */
-const slice = (start, end, string) => {
-  // const totalStartPerf = process.hrtime();
-  const res = R.ifElse(
+const slice = (start, end, string) =>
+  R.ifElse(
     R.pathEq(['string', 'length'], 0),
     R.identity,
     R.evolve({
@@ -48,11 +47,5 @@ const slice = (start, end, string) => {
       )
     })
   )(string);
-
-  // const totalEndPerf = process.hrtime(totalStartPerf);
-  // console.info('Total: %dms', totalEndPerf[1] / 1000000);
-
-  return res;
-};
 
 export default R.curryN(3, slice);
