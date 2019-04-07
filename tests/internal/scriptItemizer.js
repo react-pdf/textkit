@@ -10,7 +10,7 @@ import * as R from 'ramda';
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */
-const scriptItemizer = jest.fn(
+export const scriptItemizerImpl = jest.fn(
   R.evolve({
     runs: R.ifElse(
       R.isEmpty,
@@ -22,5 +22,7 @@ const scriptItemizer = jest.fn(
     )
   })
 );
+
+const scriptItemizer = jest.fn(() => scriptItemizerImpl);
 
 export default scriptItemizer;

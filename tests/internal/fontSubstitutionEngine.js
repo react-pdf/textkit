@@ -10,7 +10,7 @@ import * as R from 'ramda';
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */
-const fontSubstitutionEngine = jest.fn(
+export const fontSubstitutionImpl = jest.fn(
   R.evolve({
     runs: R.ifElse(
       R.isEmpty,
@@ -22,5 +22,7 @@ const fontSubstitutionEngine = jest.fn(
     )
   })
 );
+
+const fontSubstitutionEngine = jest.fn(() => fontSubstitutionImpl);
 
 export default fontSubstitutionEngine;

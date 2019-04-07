@@ -20,23 +20,24 @@ import applyDefaultStyles from './applyDefaultStyles';
  * @param  {Object}  engines
  * @param  {Object}  attributted string
  * @param  {Object}  container rect
+ * @param  {Object}  layout options
  * @return {Array} paragraph blocks
  */
-const layoutEngine = (engines, attributedString, container) => {
+const layoutEngine = (engines, attributedString, container, options = {}) => {
   const processParagraphs = R.compose(
-    resolveYOffset(engines),
-    resolveAttachments(engines),
-    generateGlyphs(engines),
-    wrapWords(engines)
+    resolveYOffset(engines, options),
+    resolveAttachments(engines, options),
+    generateGlyphs(engines, options),
+    wrapWords(engines, options)
   );
 
   return R.compose(
-    finalizeFragments(engines),
-    typesetter(engines)(container),
+    finalizeFragments(engines, options),
+    typesetter(engines, options, container),
     R.map(processParagraphs),
-    splitParagraphs(engines),
-    preprocessRuns(engines),
-    applyDefaultStyles(engines)
+    splitParagraphs(engines, options),
+    preprocessRuns(engines, options),
+    applyDefaultStyles(engines, options)
   )(attributedString);
 };
 

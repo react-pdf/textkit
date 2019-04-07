@@ -23,6 +23,7 @@ const resolveRunYOffset = run => {
  * Resolves yOffset for multiple paragraphs
  *
  * @param  {Object} layout engines
+ * @param  {Object}  layout options
  * @param  {Array}  attributed strings (paragraphs)
  * @return {Array} attributed strings (paragraphs)
  */

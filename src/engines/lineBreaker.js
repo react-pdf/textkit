@@ -46,13 +46,12 @@ const breakLines = (string, nodes, breaks) => {
   return lines;
 };
 
-// TODO: parametrize penalty via options
-const getNodes = (attributedString, { align }) => {
+const getNodes = (attributedString, { align }, options) => {
   let start = 0;
 
   const hyphenWidth = 5;
-  const hyphenPenalty = align === 'justify' ? 100 : 600;
   const { syllables } = attributedString;
+  const hyphenPenalty = options.penalty || (align === 'justify' ? 100 : 600);
 
   const result = syllables.reduce((acc, s, index) => {
     const width = advanceWidthBetween(start, start + s.length, attributedString);
@@ -85,12 +84,12 @@ const getNodes = (attributedString, { align }) => {
   return result;
 };
 
-const lineBreaker = (attributedString, availableWidths) => {
-  let tolerance = 4; // TODO: Edit by options
+const lineBreaker = options => (attributedString, availableWidths) => {
+  let tolerance = options.tolerance || 4;
 
   const style = attributedString.runs[0].attributes;
 
-  const nodes = getNodes(attributedString, style);
+  const nodes = getNodes(attributedString, style, options);
   let breaks = linebreak(nodes, availableWidths, { tolerance });
 
   // Try again with a higher tolerance if the line breaking failed.

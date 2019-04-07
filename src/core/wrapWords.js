@@ -13,6 +13,7 @@ const defaultHyphenationEngine = word => [word];
  * Wrap words of attribute string
  *
  * @param  {Object} layout engines
+ * @param  {Object}  layout options
  * @param  {Object}  attributed string
  * @return {Object} attributed string including syllables
  */

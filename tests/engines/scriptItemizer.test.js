@@ -1,22 +1,24 @@
 import scriptItemizer from '../../src/engines/scriptItemizer';
 
+const instance = scriptItemizer();
+
 describe('scriptItemizer', () => {
   test('should return empty array for empty string', () => {
-    const string = scriptItemizer({ string: '' });
+    const string = instance({ string: '' });
 
     expect(string).toHaveProperty('runs', []);
     expect(string).toHaveProperty('string', '');
   });
 
   test('should return empty array for null string', () => {
-    const string = scriptItemizer({ string: null });
+    const string = instance({ string: null });
 
     expect(string).toHaveProperty('runs', []);
     expect(string).toHaveProperty('string', '');
   });
 
   test('should return run with correct latin script', () => {
-    const string = scriptItemizer({ string: 'Lorem' });
+    const string = instance({ string: 'Lorem' });
 
     expect(string).toHaveProperty('string', 'Lorem');
     expect(string.runs).toHaveLength(1);
@@ -27,7 +29,7 @@ describe('scriptItemizer', () => {
 
   test('should return run with correct non-latin script', () => {
     const string = '្ញុំអាចញ៉ាំកញ្';
-    const value = scriptItemizer({ string });
+    const value = instance({ string });
 
     expect(value).toHaveProperty('string', string);
     expect(value.runs).toHaveLength(1);
@@ -38,7 +40,7 @@ describe('scriptItemizer', () => {
 
   test('should return runs with correct script for many scripts', () => {
     const string = '្ញុំអាចញ៉ាំកញ្Lorem';
-    const value = scriptItemizer({ string });
+    const value = instance({ string });
 
     expect(value).toHaveProperty('string', string);
     expect(value.runs).toHaveLength(2);

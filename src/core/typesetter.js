@@ -21,11 +21,12 @@ const blockHeight = R.compose(
  * fit anymore, performing line wrapping in the process.
  *
  * @param  {Object}  engines
+ * @param  {Object}  layout options
  * @param  {Object}  container rect
  * @param  {Object}  attributed strings (paragraphs)
  * @return {Array} paragraph blocks
  */
-const typesetter = (engines, container, attributedStrings) => {
+const typesetter = (engines, options, container, attributedStrings) => {
   const blocks = [];
   const paragraphs = [...attributedStrings];
 
@@ -33,7 +34,7 @@ const typesetter = (engines, container, attributedStrings) => {
   let nextParagraph = paragraphs.shift();
 
   while (nextParagraph) {
-    const block = layoutParagraph(engines)(paragraphRect, nextParagraph);
+    const block = layoutParagraph(engines, options)(paragraphRect, nextParagraph);
     const linesHeight = blockHeight(block);
 
     if (paragraphRect.height >= linesHeight) {
@@ -49,4 +50,4 @@ const typesetter = (engines, container, attributedStrings) => {
   return blocks;
 };
 
-export default R.curryN(3, typesetter);
+export default R.curryN(4, typesetter);

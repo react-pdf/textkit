@@ -1,14 +1,14 @@
 import empty from '../../src/attributedString/empty';
 import preprocessRuns from '../../src/core/preprocessRuns';
-import scriptItemizer from '../internal/scriptItemizer';
-import fontSubstitutionEngine from '../internal/fontSubstitutionEngine';
+import scriptItemizer, { scriptItemizerImpl } from '../internal/scriptItemizer';
+import fontSubstitution, { fontSubstitutionImpl } from '../internal/fontSubstitutionEngine';
 
-const preprocessor = preprocessRuns({ scriptItemizer, fontSubstitutionEngine });
+const preprocessor = preprocessRuns({ scriptItemizer, fontSubstitution });
 
 describe('preprocessRuns', () => {
   beforeEach(() => {
-    scriptItemizer.mockClear();
-    fontSubstitutionEngine.mockClear();
+    scriptItemizerImpl.mockClear();
+    fontSubstitutionImpl.mockClear();
   });
 
   test('should call both engines with attributed string', () => {
@@ -16,10 +16,10 @@ describe('preprocessRuns', () => {
 
     preprocessor(param);
 
-    expect(scriptItemizer.mock.calls).toHaveLength(1);
-    expect(scriptItemizer.mock.calls[0][0]).toBe(param);
-    expect(fontSubstitutionEngine.mock.calls).toHaveLength(1);
-    expect(fontSubstitutionEngine.mock.calls[0][0]).toBe(param);
+    expect(scriptItemizerImpl.mock.calls).toHaveLength(1);
+    expect(scriptItemizerImpl.mock.calls[0][0]).toBe(param);
+    expect(fontSubstitutionImpl.mock.calls).toHaveLength(1);
+    expect(fontSubstitutionImpl.mock.calls[0][0]).toBe(param);
   });
 
   test('should return empty value for null param', () => {

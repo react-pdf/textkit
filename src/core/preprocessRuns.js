@@ -10,10 +10,11 @@ const omitFont = R.evolve({ runs: R.map(omit('font')) });
  * Performs font substitution and script itemization on attributed string
  *
  * @param  {Object}  engines
+ * @param  {Object}  layout options
  * @param  {Object}  attributed string
  * @return {Object} processed attributed string
  */
-const preprocessRuns = engines =>
+const preprocessRuns = (engines, options) =>
   R.ifElse(
     R.isNil,
     empty,
@@ -23,7 +24,11 @@ const preprocessRuns = engines =>
         flatten,
         R.flatten,
         R.pluck('runs'),
-        R.juxt([engines.fontSubstitution, engines.scriptItemizer, omitFont])
+        R.juxt([
+          engines.fontSubstitution(options), // font substitution
+          engines.scriptItemizer(options), // script itemization
+          omitFont
+        ])
       )
     })
   );

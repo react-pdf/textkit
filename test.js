@@ -55,7 +55,9 @@ const container = { x: 20, y: 50, width: 570, height: 700 };
 
 doc.rect(container.x, container.y, container.width, container.height).stroke();
 
-const layout = layoutEngine(longString, container);
+const layout = layoutEngine(longString, container, {
+  shrinkWhitespaceFactor: { before: -0.5, after: -0.5 }
+});
 
 // console.log(layout);
 const hrend = process.hrtime(hrstart);

@@ -62,6 +62,8 @@ const layoutRun = string => run => {
 /**
  * Generate glyphs for single attributed string
  *
+ * @param  {Object}  layout engines
+ * @param  {Object}  layout options
  * @param  {Array}  attributed strings
  * @return {Array} attributed string with glyphs
  */

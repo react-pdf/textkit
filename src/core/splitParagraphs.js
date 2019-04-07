@@ -4,6 +4,8 @@ import slice from '../attributedString/slice';
 /**
  * Breaks attributed string into paragraphs
  *
+ * @param  {Object}  engines
+ * @param  {Object}  layout options
  * @param  {Object}  attributed string
  * @return {Array} attributed string array
  */

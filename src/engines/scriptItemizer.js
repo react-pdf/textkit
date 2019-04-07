@@ -7,10 +7,11 @@ const ignoredScripts = ['Common', 'Inherited', 'Unknown'];
 /**
  * ResolvesUnicode script in runs, grouping equal runs together
  *
+ * @param  {Object}  layout options
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */
-const scriptItemizer = ({ string }) => {
+const scriptItemizer = () => ({ string }) => {
   let lastScript = 'Unknown';
   let lastIndex = 0;
   let index = 0;

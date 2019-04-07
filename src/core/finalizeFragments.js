@@ -22,10 +22,13 @@ const removeNewLine = R.when(
   dropLast
 );
 
+const getOverflowLeft = R.converge(R.add, [R.propOr(0, 'overflowLeft'), leadingOffset]);
+const getOverflowRight = R.converge(R.add, [R.propOr(0, 'overflowRight'), trailingOffset]);
+
 // Ignore whitespace at the start and end of a line for alignment
 const adjustOverflow = line => {
-  const overflowLeft = R.converge(R.add, [R.propOr(0, 'overflowLeft'), leadingOffset])(line);
-  const overflowRight = R.converge(R.add, [R.propOr(0, 'overflowRight'), trailingOffset])(line);
+  const overflowLeft = getOverflowLeft(line);
+  const overflowRight = getOverflowRight(line);
 
   return R.compose(
     R.assoc('overflowLeft', overflowLeft),
@@ -39,31 +42,31 @@ const adjustOverflow = line => {
   )(line);
 };
 
-const justifyLine = (engines, align) => line => {
+const justifyLine = (engines, options, align) => line => {
   const lineAdvanceWidth = advanceWidth(line);
   const remainingWidth = Math.max(0, line.box.width - lineAdvanceWidth);
   const shouldJustify = align === 'justify' || lineAdvanceWidth > line.box.width;
 
   return R.compose(
-    R.when(R.always(shouldJustify), engines.justification),
+    R.when(R.always(shouldJustify), engines.justification(options)),
     R.evolve({ box: R.evolve({ x: R.add(remainingWidth * ALIGNMENT_FACTORS[align]) }) })
   )(line);
 };
 
-const finalizeBlock = (engines = {}) => (line, i, lines) => {
+const finalizeBlock = (engines = {}, options) => (line, i, lines) => {
   const isLastFragment = i === lines.length - 1;
   const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
   const align = isLastFragment ? style.alignLastLine : style.align;
 
   return R.compose(
-    engines.textDecoration,
-    justifyLine(engines, align),
+    engines.textDecoration(options),
+    justifyLine(engines, options, align),
     adjustOverflow,
     removeNewLine
   )(line);
 };
 
-const finalizeFragments = (engines, blocks) =>
-  R.map(R.addIndex(R.map)(finalizeBlock(engines)), blocks);
+const finalizeFragments = (engines, options, blocks) =>
+  R.map(R.addIndex(R.map)(finalizeBlock(engines, options)), blocks);
 
-export default R.curryN(2, finalizeFragments);
+export default R.curryN(3, finalizeFragments);

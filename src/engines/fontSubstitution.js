@@ -4,10 +4,11 @@ import empty from '../attributedString/empty';
  * Resolve font runs in an AttributedString, grouping equal
  * runs and performing font substitution where necessary.
  *
+ * @param  {Object}  layout options
  * @param  {Object}  attributed string
  * @return {Object} attributed string
  */
-const fontSubstitution = ({ string, runs }) => {
+const fontSubstitution = () => ({ string, runs }) => {
   let lastFont = null;
   let lastIndex = 0;
   let index = 0;

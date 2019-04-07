@@ -8,7 +8,7 @@ import * as R from 'ramda';
  */
 const omit = (value, run) =>
   R.evolve({
-    attributes: R.omit([value])
+    attributes: R.dissoc(value)
   })(run);
 
 export default R.curryN(2, omit);

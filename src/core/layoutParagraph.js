@@ -1,9 +1,16 @@
 import * as R from 'ramda';
 
+import omit from '../run/omit';
 import stringHeight from '../attributedString/height';
 
 const ATTACHMENT_CODE = '\ufffc'; // 65532
 
+/**
+ * Remove attachment attribute if no char present
+ *
+ * @param  {Object} attributed string
+ * @return {Object} attributed string
+ */
 const purgeAttachments = R.when(
   R.compose(
     R.not,
@@ -11,7 +18,7 @@ const purgeAttachments = R.when(
     R.prop('string')
   ),
   R.evolve({
-    runs: R.map(R.evolve({ attributes: R.dissoc('attachment') }))
+    runs: R.map(omit('attachment'))
   })
 );
 
@@ -48,12 +55,13 @@ const layoutLines = (rect, lines) => {
  * Performs line breaking and layout
  *
  * @param  {Object} engines
+ * @param  {Object}  layout options
  * @param  {Object} rect
  * @param  {Object} attributed string
  * @return {Object} layout block
  */
-const layoutParagraph = engines => (rect, paragraph) => {
-  const lines = engines.lineBreaker(paragraph, [rect.width]);
+const layoutParagraph = (engines, options) => (rect, paragraph) => {
+  const lines = engines.lineBreaker(options)(paragraph, [rect.width]);
   const lineFragments = layoutLines(rect, lines);
   return lineFragments;
 };

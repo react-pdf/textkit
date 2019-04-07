@@ -24,9 +24,6 @@ const EXPAND_CHAR_FACTOR = {
   unconstrained: false
 };
 
-// TODO: Override factors
-// { before: -0.5, after: -0.5 }
-
 const SHRINK_WHITESPACE_FACTOR = {
   before: -0.04296875, // -11/256
   after: -0.04296875,
@@ -41,21 +38,27 @@ const SHRINK_CHAR_FACTOR = {
   unconstrained: false
 };
 
-const getCharFactor = R.ifElse(
-  R.equals('GROW'),
-  R.always(EXPAND_CHAR_FACTOR),
-  R.always(SHRINK_CHAR_FACTOR)
-);
+const getCharFactor = (direction, options) => {
+  const expandCharFactor = R.propOr({}, 'expandCharFactor', options);
+  const shrinkCharFactor = R.propOr({}, 'shrinkCharFactor', options);
 
-const getWhitespaceFactor = R.ifElse(
-  R.equals('GROW'),
-  R.always(EXPAND_WHITESPACE_FACTOR),
-  R.always(SHRINK_WHITESPACE_FACTOR)
-);
+  return direction === 'GROW'
+    ? R.merge(EXPAND_CHAR_FACTOR, expandCharFactor)
+    : R.merge(SHRINK_CHAR_FACTOR, shrinkCharFactor);
+};
 
-const factor = direction => glyphs => {
-  const charFactor = getCharFactor(direction);
-  const whitespaceFactor = getWhitespaceFactor(direction);
+const getWhitespaceFactor = (direction, options) => {
+  const expandWhitespaceFactor = R.propOr({}, 'expandWhitespaceFactor', options);
+  const shrinkWhitespaceFactor = R.propOr({}, 'shrinkWhitespaceFactor', options);
+
+  return direction === 'GROW'
+    ? R.merge(EXPAND_WHITESPACE_FACTOR, expandWhitespaceFactor)
+    : R.merge(SHRINK_WHITESPACE_FACTOR, shrinkWhitespaceFactor);
+};
+
+const factor = (direction, options) => glyphs => {
+  const charFactor = getCharFactor(direction, options);
+  const whitespaceFactor = getWhitespaceFactor(direction, options);
 
   const factors = [];
   for (let index = 0; index < glyphs.length; index++) {
@@ -180,9 +183,9 @@ const assign = (gap, factors) => {
   return distances;
 };
 
-const getFactors = (gap, line) => {
+const getFactors = (gap, line, options) => {
   const direction = gap > 0 ? 'GROW' : 'SHRINK';
-  const getFactor = factor(direction);
+  const getFactor = factor(direction, options);
 
   const concatFactors = R.useWith(R.concat, [
     R.identity,
@@ -218,15 +221,16 @@ const justifyLine = (distances, line) => {
  *
  * //TODO: Make it immutable
  *
+ * @param {Object} layout options
  * @param {Object} line
  * @returns {Object} line
  */
-const justification = line => {
+const justification = options => line => {
   const gap = line.box.width - advanceWidth(line);
 
   if (gap === 0) return; // Exact fit
 
-  const factors = getFactors(gap, line);
+  const factors = getFactors(gap, line, options);
   const distances = assign(gap, factors);
 
   return justifyLine(distances, line);
