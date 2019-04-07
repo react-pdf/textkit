@@ -27,22 +27,21 @@ const adjustOverflow = line => {
   const overflowLeft = R.converge(R.add, [R.propOr(0, 'overflowLeft'), leadingOffset])(line);
   const overflowRight = R.converge(R.add, [R.propOr(0, 'overflowRight'), trailingOffset])(line);
 
-  return R.evolve(
-    {
-      overflowLeft: R.always(overflowLeft),
-      overflowRight: R.always(overflowRight),
+  return R.compose(
+    R.assoc('overflowLeft', overflowLeft),
+    R.assoc('overflowRight', overflowRight),
+    R.evolve({
       box: R.evolve({
         x: R.subtract(R.__, overflowLeft),
         width: R.add(overflowLeft + overflowRight)
       })
-    },
-    line
-  );
+    })
+  )(line);
 };
 
 const justifyLine = (engines, align) => line => {
   const lineAdvanceWidth = advanceWidth(line);
-  const remainingWidth = line.box.width - lineAdvanceWidth;
+  const remainingWidth = Math.max(0, line.box.width - lineAdvanceWidth);
   const shouldJustify = align === 'justify' || lineAdvanceWidth > line.box.width;
 
   return R.compose(
@@ -51,17 +50,13 @@ const justifyLine = (engines, align) => line => {
   )(line);
 };
 
-const decorateLine = engines => line =>
-  // engines.decorationEngine(line);
-  line;
-
-const finalizeBlock = engines => (line, i, lines) => {
+const finalizeBlock = (engines = {}) => (line, i, lines) => {
   const isLastFragment = i === lines.length - 1;
   const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
   const align = isLastFragment ? style.alignLastLine : style.align;
 
   return R.compose(
-    decorateLine(engines),
+    engines.textDecoration,
     justifyLine(engines, align),
     adjustOverflow,
     removeNewLine

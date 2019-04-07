@@ -24,6 +24,7 @@ const EXPAND_CHAR_FACTOR = {
   unconstrained: false
 };
 
+// TODO: Override factors
 // { before: -0.5, after: -0.5 }
 
 const SHRINK_WHITESPACE_FACTOR = {
@@ -40,17 +41,21 @@ const SHRINK_CHAR_FACTOR = {
   unconstrained: false
 };
 
-const factor = (glyphs, direction) => {
-  let charFactor;
-  let whitespaceFactor;
+const getCharFactor = R.ifElse(
+  R.equals('GROW'),
+  R.always(EXPAND_CHAR_FACTOR),
+  R.always(SHRINK_CHAR_FACTOR)
+);
 
-  if (direction === 'GROW') {
-    charFactor = clone(EXPAND_CHAR_FACTOR);
-    whitespaceFactor = clone(EXPAND_WHITESPACE_FACTOR);
-  } else {
-    charFactor = clone(SHRINK_CHAR_FACTOR);
-    whitespaceFactor = clone(SHRINK_WHITESPACE_FACTOR);
-  }
+const getWhitespaceFactor = R.ifElse(
+  R.equals('GROW'),
+  R.always(EXPAND_WHITESPACE_FACTOR),
+  R.always(SHRINK_WHITESPACE_FACTOR)
+);
+
+const factor = direction => glyphs => {
+  const charFactor = getCharFactor(direction);
+  const whitespaceFactor = getWhitespaceFactor(direction);
 
   const factors = [];
   for (let index = 0; index < glyphs.length; index++) {
@@ -175,30 +180,27 @@ const assign = (gap, factors) => {
   return distances;
 };
 
-/**
- * A JustificationEngine is used by a Typesetter to perform line fragment
- * justification. This implementation is based on a description of Apple's
- * justification algorithm from a PDF in the Apple Font Tools package.
- *
- * //TODO: Make it immutable
- *
- * @returns {Object} line
- */
-const justification = line => {
-  const gap = line.box.width - advanceWidth(line);
-  if (gap === 0) return;
+const getFactors = (gap, line) => {
+  const direction = gap > 0 ? 'GROW' : 'SHRINK';
+  const getFactor = factor(direction);
 
-  const factors = [];
+  const concatFactors = R.useWith(R.concat, [
+    R.identity,
+    R.compose(
+      getFactor,
+      R.prop('glyphs')
+    )
+  ]);
 
-  for (const run of line.runs) {
-    factors.push(...factor(run.glyphs, gap > 0 ? 'GROW' : 'SHRINK'));
-  }
+  return R.compose(
+    R.adjust(-1, R.assoc('after', 0)),
+    R.adjust(0, R.assoc('before', 0)),
+    R.reduce(concatFactors, []),
+    R.prop('runs')
+  )(line);
+};
 
-  factors[0].before = 0;
-  factors[factors.length - 1].after = 0;
-
-  const distances = assign(gap, factors);
-
+const justifyLine = (distances, line) => {
   let index = 0;
   for (const run of line.runs) {
     for (const position of run.positions) {
@@ -207,6 +209,27 @@ const justification = line => {
   }
 
   return line;
+};
+
+/**
+ * A JustificationEngine is used by a Typesetter to perform line fragment
+ * justification. This implementation is based on a description of Apple's
+ * justification algorithm from a PDF in the Apple Font Tools package.
+ *
+ * //TODO: Make it immutable
+ *
+ * @param {Object} line
+ * @returns {Object} line
+ */
+const justification = line => {
+  const gap = line.box.width - advanceWidth(line);
+
+  if (gap === 0) return; // Exact fit
+
+  const factors = getFactors(gap, line);
+  const distances = assign(gap, factors);
+
+  return justifyLine(distances, line);
 };
 
 export default justification;

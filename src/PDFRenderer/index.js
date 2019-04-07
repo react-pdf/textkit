@@ -83,6 +83,56 @@ const renderRun = (ctx, run, options) => {
   ctx.translate(runAdvanceWidth, 0);
 };
 
+const renderBackground = (ctx, rect, backgroundColor) => {
+  ctx.rect(rect.x, rect.y, rect.width, rect.height);
+  ctx.fill(backgroundColor);
+};
+
+const renderDecorationLine = (ctx, line) => {
+  ctx.save();
+  ctx.lineWidth(line.rect.height);
+  ctx.strokeOpacity(line.opacity);
+
+  if (/dashed/.test(line.style)) {
+    ctx.dash(3 * line.rect.height);
+  } else if (/dotted/.test(line.style)) {
+    ctx.dash(line.rect.height);
+  }
+
+  if (/wavy/.test(line.style)) {
+    const dist = Math.max(2, line.rect.height);
+    let step = 1.1 * dist;
+    const stepCount = Math.floor(line.rect.width / (2 * step));
+
+    // Adjust step to fill entire width
+    const remainingWidth = line.rect.width - stepCount * 2 * step;
+    const adjustment = remainingWidth / stepCount / 2;
+    step += adjustment;
+
+    const cp1y = line.rect.y + dist;
+    const cp2y = line.rect.y - dist;
+    let { x } = line.rect;
+
+    ctx.moveTo(line.rect.x, line.rect.y);
+
+    for (let i = 0; i < stepCount; i++) {
+      ctx.bezierCurveTo(x + step, cp1y, x + step, cp2y, x + 2 * step, line.rect.y);
+      x += 2 * step;
+    }
+  } else {
+    ctx.moveTo(line.rect.x, line.rect.y);
+    ctx.lineTo(line.rect.x + line.rect.width, line.rect.y);
+
+    if (/double/.test(line.style)) {
+      ctx.moveTo(line.rect.x, line.rect.y + line.rect.height * 2);
+      ctx.lineTo(line.rect.x + line.rect.width, line.rect.y + line.rect.height * 2);
+    }
+  }
+
+  ctx.stroke(line.color);
+  ctx.restore();
+};
+
 const renderLine = (ctx, line, options) => {
   const lineAscent = ascent(line);
 
@@ -94,10 +144,15 @@ const renderLine = (ctx, line, options) => {
   ctx.translate(line.box.x, line.box.y + lineAscent);
 
   for (const run of line.runs) {
-    // if (run.attributes.backgroundColor) {
-    //   const backgroundRect = new Rect(0, -line.ascent, run.advanceWidth, line.rect.height);
-    //   this.renderBackground(backgroundRect, run.attributes.backgroundColor);
-    // }
+    if (run.attributes.backgroundColor) {
+      const backgroundRect = {
+        x: 0,
+        y: -lineAscent,
+        height: line.box.height,
+        width: advanceWidth(run) - line.overflowRight
+      };
+      renderBackground(ctx, backgroundRect, run.attributes.backgroundColor);
+    }
     renderRun(ctx, run, options);
   }
 
@@ -105,9 +160,9 @@ const renderLine = (ctx, line, options) => {
   ctx.save();
   ctx.translate(line.box.x, line.box.y);
 
-  // for (const decorationLine of line.decorationLines) {
-  //   this.renderDecorationLine(decorationLine);
-  // }
+  for (const decorationLine of line.decorationLines) {
+    renderDecorationLine(ctx, decorationLine);
+  }
 
   ctx.restore();
 };
@@ -125,50 +180,3 @@ const render = (ctx, blocks, options = {}) => {
 };
 
 export default { render };
-
-// renderBackground(rect, backgroundColor) {
-//   this.ctx.rect(rect.x, rect.y, rect.width, rect.height);
-//   this.ctx.fill(backgroundColor);
-// }
-
-// renderDecorationLine(line) {
-//   this.ctx.lineWidth(line.rect.height);
-
-//   if (/dashed/.test(line.style)) {
-//     this.ctx.dash(3 * line.rect.height);
-//   } else if (/dotted/.test(line.style)) {
-//     this.ctx.dash(line.rect.height);
-//   }
-
-//   if (/wavy/.test(line.style)) {
-//     const dist = Math.max(2, line.rect.height);
-//     let step = 1.1 * dist;
-//     const stepCount = Math.floor(line.rect.width / (2 * step));
-
-//     // Adjust step to fill entire width
-//     const remainingWidth = line.rect.width - stepCount * 2 * step;
-//     const adjustment = remainingWidth / stepCount / 2;
-//     step += adjustment;
-
-//     const cp1y = line.rect.y + dist;
-//     const cp2y = line.rect.y - dist;
-//     let { x } = line.rect;
-
-//     this.ctx.moveTo(line.rect.x, line.rect.y);
-
-//     for (let i = 0; i < stepCount; i++) {
-//       this.ctx.bezierCurveTo(x + step, cp1y, x + step, cp2y, x + 2 * step, line.rect.y);
-//       x += 2 * step;
-//     }
-//   } else {
-//     this.ctx.moveTo(line.rect.x, line.rect.y);
-//     this.ctx.lineTo(line.rect.maxX, line.rect.y);
-
-//     if (/double/.test(line.style)) {
-//       this.ctx.moveTo(line.rect.x, line.rect.y + line.rect.height * 2);
-//       this.ctx.lineTo(line.rect.maxX, line.rect.y + line.rect.height * 2);
-//     }
-//   }
-
-//   this.ctx.stroke(line.color);
-// }

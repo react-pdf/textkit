@@ -23,7 +23,7 @@ const preprocessRuns = engines =>
         flatten,
         R.flatten,
         R.pluck('runs'),
-        R.juxt([engines.fontSubstitutionEngine, engines.scriptItemizer, omitFont])
+        R.juxt([engines.fontSubstitution, engines.scriptItemizer, omitFont])
       )
     })
   );

@@ -100,7 +100,7 @@ describe('resolveAttachments', () => {
     expect(result).toEqual(string);
   });
 
-  test('should return same string if attachment code point present but no attachment passed', () => {
+  test('should return same string if attachment code point present but no attachment', () => {
     const string = {
       string: 'Lorem',
       runs: [
