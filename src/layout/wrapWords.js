@@ -1,4 +1,4 @@
-import fromFragments from '../../src/attributedString/fromFragments';
+import fromFragments from '../attributedString/fromFragments';
 
 /**
  * Default word hyphenation engine used when no one provided.
@@ -17,10 +17,11 @@ const defaultHyphenationEngine = word => [word];
  * @param  {Object}  attributed string
  * @return {Object} attributed string including syllables
  */
-const wrapWords = (engines = {}) => attributedString => {
+const wrapWords = (engines = {}, options = {}) => attributedString => {
   const syllables = [];
   const fragments = [];
-  const hyphenateWord = engines.wordHyphenation || defaultHyphenationEngine;
+  const hyphenateWord =
+    options.hyphenationCallback || engines.wordHyphenation || defaultHyphenationEngine;
 
   for (const run of attributedString.runs) {
     let string = '';

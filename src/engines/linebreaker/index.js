@@ -51,7 +51,7 @@ const getNodes = (attributedString, { align }, options) => {
 
   const hyphenWidth = 5;
   const { syllables } = attributedString;
-  const hyphenPenalty = options.penalty || (align === 'justify' ? 100 : 600);
+  const hyphenPenalty = options.hyphenationPenalty || (align === 'justify' ? 100 : 600);
 
   const result = syllables.reduce((acc, s, index) => {
     const width = advanceWidthBetween(start, start + s.length, attributedString);

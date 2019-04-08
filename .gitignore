@@ -7,3 +7,13 @@ dist
 lerna-debug.log
 test.js
 dist
+/attributedString
+/engines
+/glyph
+/indices
+/layout
+/renderers
+/run
+/rect
+/utils
+/index.js

@@ -2,17 +2,26 @@
   "name": "@react-pdf/textkit",
   "version": "0.3.0",
   "description": "An advanced text layout framework",
-  "main": "dist/index.js",
+  "main": "./index.js",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf attributedString layout engines glyph indices rect renderers run utils index.js",
     "prepublish": "npm run build",
-    "build": "babel ./src --out-dir ./dist",
-    "build:watch": "babel ./src --out-dir ./dist --watch",
+    "build": "babel ./src --out-dir ./",
+    "build:watch": "babel ./src --out-dir ./ --watch",
     "precommit": "lint-staged",
     "test": "jest"
   },
   "files": [
-    "dist"
+    "attributedString",
+    "engines",
+    "glyph",
+    "indices",
+    "layout",
+    "rect",
+    "renderers",
+    "run",
+    "utils",
+    "index.js"
   ],
   "contributors": [
     "Devon Govett <devongovett@gmail.com>",
