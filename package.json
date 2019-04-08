@@ -39,8 +39,6 @@
     "ramda": "^0.26.1"
   },
   "devDependencies": {
-    "@react-pdf/fontkit": "^1.13.0",
-    "@react-pdf/pdfkit": "^1.2.0",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
     "@babel/node": "^7.2.2",
@@ -48,6 +46,8 @@
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
+    "@react-pdf/fontkit": "^1.13.0",
+    "@react-pdf/pdfkit": "^1.2.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
     "babel-plugin-add-module-exports": "^1.0.0",
@@ -57,10 +57,10 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jest": "^21.14.0",
     "husky": "^0.14.3",
-    "jest": "^22.4.2",
+    "jest": "^24.7.1",
     "lint-staged": "^7.0.0",
     "prettier": "^1.11.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.3"
   },
   "lint-staged": {
     "*.js": [
