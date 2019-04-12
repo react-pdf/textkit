@@ -29,15 +29,17 @@ const purgeAttachments = R.when(
  * @param  {Array} attributed strings
  * @return {Object} layout blocks
  */
-const layoutLines = (rect, lines) => {
+const layoutLines = (rect, lines, indent) => {
   let currentY = rect.y;
 
-  return R.map(
+  return R.addIndex(R.map)(
     R.compose(
-      line => {
+      purgeAttachments,
+      (line, i) => {
+        const lineIndent = i === 0 ? indent : 0;
         const style = R.pathOr({}, ['runs', 0, 'attributes'], line);
         const height = Math.max(stringHeight(line), style.lineHeight);
-        const box = { x: rect.x, y: currentY, width: rect.width, height };
+        const box = { x: rect.x + lineIndent, y: currentY, width: rect.width - lineIndent, height };
 
         currentY += height;
 
@@ -45,8 +47,7 @@ const layoutLines = (rect, lines) => {
           R.assoc('box', box),
           R.omit(['syllables'])
         )(line);
-      },
-      purgeAttachments
+      }
     )
   )(lines);
 };
@@ -61,8 +62,9 @@ const layoutLines = (rect, lines) => {
  * @return {Object} layout block
  */
 const layoutParagraph = (engines, options) => (rect, paragraph) => {
-  const lines = engines.linebreaker(options)(paragraph, [rect.width]);
-  const lineFragments = layoutLines(rect, lines);
+  const indent = R.pathOr(0, ['runs', 0, 'attributes', 'indent'], paragraph);
+  const lines = engines.linebreaker(options)(paragraph, [rect.width - indent, rect.width]);
+  const lineFragments = layoutLines(rect, lines, indent);
   return lineFragments;
 };
 
