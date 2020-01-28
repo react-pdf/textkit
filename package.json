@@ -35,7 +35,6 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@react-pdf/unicode-properties": "^2.2.0",
-    "babel-runtime": "^6.26.0",
     "hyphen": "^1.1.1",
     "ramda": "^0.26.1"
   },
