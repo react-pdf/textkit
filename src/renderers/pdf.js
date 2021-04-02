@@ -3,6 +3,10 @@ import runDescent from '../run/descent';
 import advanceWidth from '../run/advanceWidth';
 import ascent from '../attributedString/ascent';
 
+const DEST_REGEXP = /^#.+/;
+
+const isSrcId = src => src.match(DEST_REGEXP);
+
 const renderAttachments = (ctx, run) => {
   ctx.save();
 
@@ -55,7 +59,11 @@ const renderRun = (ctx, run, options) => {
   ctx.fillOpacity(opacity);
 
   if (link) {
-    ctx.link(0, -height - descent, runAdvanceWidth, height, link);
+    if (isSrcId(link)) {
+      ctx.goTo(0, -height - descent, runAdvanceWidth, height, link.slice(1));
+    } else {
+      ctx.link(0, -height - descent, runAdvanceWidth, height, link);
+    }
   }
 
   renderAttachments(ctx, run);
