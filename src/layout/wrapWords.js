@@ -22,6 +22,7 @@ const defaultHyphenationEngine = word => [word];
 const wrapWords = (engines = {}, options = {}, attributedString) => {
   const syllables = [];
   const fragments = [];
+
   const hyphenateWord =
     options.hyphenationCallback ||
     (engines.wordHyphenation && engines.wordHyphenation(options)) ||
